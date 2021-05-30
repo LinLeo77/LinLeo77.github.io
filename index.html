@@ -224,6 +224,124 @@
             
 
   
+    <article id="post-对epoll实现三部曲的原理理解（图解）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/05/30/%E5%AF%B9epoll%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%83%A8%E6%9B%B2%E7%9A%84%E5%8E%9F%E7%90%86%E7%90%86%E8%A7%A3%EF%BC%88%E5%9B%BE%E8%A7%A3%EF%BC%89/" target="_blank">对epoll实现三部曲的原理理解（图解）</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/05/30/%E5%AF%B9epoll%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%83%A8%E6%9B%B2%E7%9A%84%E5%8E%9F%E7%90%86%E7%90%86%E8%A7%A3%EF%BC%88%E5%9B%BE%E8%A7%A3%EF%BC%89/" class="archive-article-date">
+        <time datetime="2021-05-30T14:04:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-30</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h5><p>在搭建服务器时，多并发必不可少。而实现多并发的操作有很多种，带来的效果也不一样，其中有</p>
+<ul>
+<li>多进程实现多并发</li>
+<li>多线程实现多并发</li>
+<li>select实现多并发</li>
+<li>poll实现多并发</li>
+<li>epoll实现多并发</li>
+</ul>
+<p>&emsp;&emsp;其中，多进程、多线程实现的底并发，原理简单，过程简单，实现简单，但耗费的资源比较多，在操作系统资源有限的情况下，这是不友好的。<br>&emsp;&emsp;而下方的三种都是在单一进程下既可以实现。其中select原理较为简单，但仅仅只能承载最多1024个文件描述符，在当今互联网的高速时代，动则上百万级的高并发，显然1024是远远不能满足人们的需求的。进而引入的select的拓展版poll，poll最高可实现65535个描述符的并发，显然，这还是不够。<br>&emsp;&emsp;在N年之后，人们发明了epoll，epoll和其前者poll则是大相径庭，epoll最高可实现百万级的高并发，在日常生活中很多地方都已经可以满足要求。</p>
+<h5 id="epoll的工作流程图解"><a href="#epoll的工作流程图解" class="headerlink" title="epoll的工作流程图解"></a>epoll的工作流程图解</h5><div align="center">
+<img src=/img/epoll流程图解.png alt = "动图演示"/>
+</div>
+
+<h5 id="epoll工作流程的个人理解"><a href="#epoll工作流程的个人理解" class="headerlink" title="epoll工作流程的个人理解"></a>epoll工作流程的个人理解</h5><div align="center">
+<img src=/img/epoll流程图解（个人）.png alt = "动图演示"/>
+</div>
+
+
+
+<pre><code>留存难点：内核究竟是通过何种方式使工作的fd找到其回调函数？遍历？或是早就以数组的形式保持到events[]中，相应的fd立马可以找到其回调函数，再去操作红黑树？
+</code></pre>
+<hr>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/05/30/%E5%AF%B9epoll%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%83%A8%E6%9B%B2%E7%9A%84%E5%8E%9F%E7%90%86%E7%90%86%E8%A7%A3%EF%BC%88%E5%9B%BE%E8%A7%A3%EF%BC%89/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-线程池技术实现多线程copy功能" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
