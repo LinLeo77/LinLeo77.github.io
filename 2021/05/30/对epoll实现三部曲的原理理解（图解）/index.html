@@ -255,7 +255,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">384字</span>
+      <span class="post-count">853字</span>
     </span>
   </span>
 
@@ -264,7 +264,7 @@
     <span class="post-meta-item-icon">
       <i class="icon-book icon"></i>
       <span class="post-meta-item-text"> 阅读时长≈</span>
-      <span class="post-count">1分</span>
+      <span class="post-count">3分</span>
     </span>
   </span>
 </div>
@@ -284,12 +284,26 @@
 <li>epoll实现多并发</li>
 </ul>
 <p>&emsp;&emsp;其中，多进程、多线程实现的底并发，原理简单，过程简单，实现简单，但耗费的资源比较多，在操作系统资源有限的情况下，这是不友好的。<br>&emsp;&emsp;而下方的三种都是在单一进程下既可以实现。其中select原理较为简单，但仅仅只能承载最多1024个文件描述符，在当今互联网的高速时代，动则上百万级的高并发，显然1024是远远不能满足人们的需求的。进而引入的select的拓展版poll，poll最高可实现65535个描述符的并发，显然，这还是不够。<br>&emsp;&emsp;在N年之后，人们发明了epoll，epoll和其前者poll则是大相径庭，epoll最高可实现百万级的高并发，在日常生活中很多地方都已经可以满足要求。</p>
+<p>一、首先，epoll_create（int size）;先创建一个eventpoll结构体对象，该结构体的主要主要成员有rdllist（就绪队列）、rbr（红黑树）、wq（等待队列），并且返回一个句柄，传参 size：用来告诉内核这个监听的数目一共有多大。<br> <div align="center"><br><img src=/img/epoll/ep1.png alt = "动图演示"/></p>
+</div>
+其中，就绪队列用于存储收到消息的文件描述符，红黑树用于存储我们所关心的所有socket的所有具体信息。等待队列用于存储休眠等待、要处理发来消息的进程。
+二、在执行到epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);语句的时候，它会进行两个操作；操作1：通过传参，也就是epoll_ctl的第三个参数（int fd：op的实施对象），它会利用此文件描述符，去到内核空间中，注册一个属于这个文件描述符的回调函数；操作2：利用已经初始化了的struct epoll_event ev结构体，（也就是第四个参数）添加到红黑树中，为该socket的具体信息。
+ <div align="center">
+<img src=/img/epoll/ep2.png alt = "动图演示"/>
+</div>
+三、在执行到语句epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);时，首先它会去到就绪队列中查询是否已经有socket描述符在等待，如果有，则取出，再利用for循环处理各个收到消息的socket；如果没有查询到就绪的socket，就会阻塞等待。
+ <div align="center">
+<img src=/img/epoll/ep3.png alt = "动图演示"/>
+</div>
+当某个或者某些socket的消息来到时，网卡会让收到消息的socket去到内核空间中，找到其对应的回调函数，开始执行（利用得到响应的文件描述符为依据，去到红黑树中查找，找到先匹配的红黑树节点，将其有用信息提取到epitem中，最后再送进就绪队列）。这时会去到等待队列中，唤醒在等待要处理消息的进程。
+
+
 <h5 id="epoll的工作流程图解"><a href="#epoll的工作流程图解" class="headerlink" title="epoll的工作流程图解"></a>epoll的工作流程图解</h5><div align="center">
-<img src=/img/epoll流程图解.png alt = "动图演示"/>
+<img src=/img/epoll/epoll流程图解.png alt = "动图演示"/>
 </div>
 
 <h5 id="epoll工作流程的个人理解"><a href="#epoll工作流程的个人理解" class="headerlink" title="epoll工作流程的个人理解"></a>epoll工作流程的个人理解</h5><div align="center">
-<img src=/img/epoll流程图解（个人）.png alt = "动图演示"/>
+<img src=/img/epoll/epoll流程图解（个人）.png alt = "动图演示"/>
 </div>
 
 
@@ -444,6 +458,15 @@
 
 
 <nav id="article-nav">
+  
+    <a href="/2021/06/03/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          基于HTTP搭建的web服务器
+        
+      </div>
+    </a>
   
   
     <a href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/" id="article-nav-older" class="article-nav-link-wrap">

@@ -224,6 +224,80 @@
             
 
   
+    <article id="post-基于HTTP搭建的web服务器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/06/03/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank">基于HTTP搭建的web服务器</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/06/03/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="archive-article-date">
+        <time datetime="2021-06-03T11:47:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/06/03/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-对epoll实现三部曲的原理理解（图解）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -262,12 +336,26 @@
 <li>epoll实现多并发</li>
 </ul>
 <p>&emsp;&emsp;其中，多进程、多线程实现的底并发，原理简单，过程简单，实现简单，但耗费的资源比较多，在操作系统资源有限的情况下，这是不友好的。<br>&emsp;&emsp;而下方的三种都是在单一进程下既可以实现。其中select原理较为简单，但仅仅只能承载最多1024个文件描述符，在当今互联网的高速时代，动则上百万级的高并发，显然1024是远远不能满足人们的需求的。进而引入的select的拓展版poll，poll最高可实现65535个描述符的并发，显然，这还是不够。<br>&emsp;&emsp;在N年之后，人们发明了epoll，epoll和其前者poll则是大相径庭，epoll最高可实现百万级的高并发，在日常生活中很多地方都已经可以满足要求。</p>
+<p>一、首先，epoll_create（int size）;先创建一个eventpoll结构体对象，该结构体的主要主要成员有rdllist（就绪队列）、rbr（红黑树）、wq（等待队列），并且返回一个句柄，传参 size：用来告诉内核这个监听的数目一共有多大。<br> <div align="center"><br><img src=/img/epoll/ep1.png alt = "动图演示"/></p>
+</div>
+其中，就绪队列用于存储收到消息的文件描述符，红黑树用于存储我们所关心的所有socket的所有具体信息。等待队列用于存储休眠等待、要处理发来消息的进程。
+二、在执行到epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);语句的时候，它会进行两个操作；操作1：通过传参，也就是epoll_ctl的第三个参数（int fd：op的实施对象），它会利用此文件描述符，去到内核空间中，注册一个属于这个文件描述符的回调函数；操作2：利用已经初始化了的struct epoll_event ev结构体，（也就是第四个参数）添加到红黑树中，为该socket的具体信息。
+ <div align="center">
+<img src=/img/epoll/ep2.png alt = "动图演示"/>
+</div>
+三、在执行到语句epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout);时，首先它会去到就绪队列中查询是否已经有socket描述符在等待，如果有，则取出，再利用for循环处理各个收到消息的socket；如果没有查询到就绪的socket，就会阻塞等待。
+ <div align="center">
+<img src=/img/epoll/ep3.png alt = "动图演示"/>
+</div>
+当某个或者某些socket的消息来到时，网卡会让收到消息的socket去到内核空间中，找到其对应的回调函数，开始执行（利用得到响应的文件描述符为依据，去到红黑树中查找，找到先匹配的红黑树节点，将其有用信息提取到epitem中，最后再送进就绪队列）。这时会去到等待队列中，唤醒在等待要处理消息的进程。
+
+
 <h5 id="epoll的工作流程图解"><a href="#epoll的工作流程图解" class="headerlink" title="epoll的工作流程图解"></a>epoll的工作流程图解</h5><div align="center">
-<img src=/img/epoll流程图解.png alt = "动图演示"/>
+<img src=/img/epoll/epoll流程图解.png alt = "动图演示"/>
 </div>
 
 <h5 id="epoll工作流程的个人理解"><a href="#epoll工作流程的个人理解" class="headerlink" title="epoll工作流程的个人理解"></a>epoll工作流程的个人理解</h5><div align="center">
-<img src=/img/epoll流程图解（个人）.png alt = "动图演示"/>
+<img src=/img/epoll/epoll流程图解（个人）.png alt = "动图演示"/>
 </div>
 
 
@@ -437,6 +525,222 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-查找算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" target="_blank">查找算法</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" class="archive-article-date">
+        <time datetime="2020-06-03T11:42:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-03</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>以下查找算法都是建立在：线性表必须采用顺序存储结构，元素按关键字有序排列。</p>
+<h5 id="二分查找（拆半查找）"><a href="#二分查找（拆半查找）" class="headerlink" title="二分查找（拆半查找）"></a>二分查找（拆半查找）</h5><p>原理：<br>&emsp;&emsp;首先，假设表中元素是按升序排列，将表中间位置记录的关键字与查找关键字比较，如果两者相等，则查找成功;否则利用中间位置记录将表分成前、后两个子表，如果中间位置记录的关键字大于查找关键字，则进一步查找前一子表，否则进一步查找后一子表。重复以上过程，直到找到满足条件的记录，使查找成功，或直到子表不存在为止，此时查找不成功。</p>
+<p>-时间复杂度：log(2n)<br><em>算法实现</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int half_search(int *a,int key,int num)	//二分查找</span><br><span class="line">&#123;</span><br><span class="line">	int i,mid,low,high;</span><br><span class="line">	low = 0; high = num-1;</span><br><span class="line">	int count = 1;</span><br><span class="line">	int b,k;</span><br><span class="line">	while(1)&#123;</span><br><span class="line">		mid = (high+low)/2;</span><br><span class="line">		if(key == a[mid])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为: %d\n&quot;,mid);</span><br><span class="line">			b = mid - 1;k = mid + 1;</span><br><span class="line">			while(a[b]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,b);</span><br><span class="line">				b--;</span><br><span class="line">			&#125;</span><br><span class="line">			while(a[k]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,k);</span><br><span class="line">				k++;</span><br><span class="line">			&#125;</span><br><span class="line">			return count;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		else if(high &lt; low)&#123;</span><br><span class="line">			printf(&quot;没找到\n&quot;);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &lt; a[mid])&#123;</span><br><span class="line">			high = mid - 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &gt; a[mid])&#123;</span><br><span class="line">			low = mid + 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>优点:比较次数少，查找速度快<br>缺点:要求为有序表，插入必须插在合适的位置</p>
+<h5 id="插值查找"><a href="#插值查找" class="headerlink" title="插值查找"></a>插值查找</h5><p>原理：<br>&emsp;&emsp;取中间记录作为比较对象，若给定值与中间记录的关键字相等，则查找成功;若给定值小于中间记录的关键字，则在中间记录左半区继续查找;否则，在右半区查找。不断重复，至到查找成功或者查找失败为止。<br>插值查找是在二分查找的基础上优化来的，他将二分查找中的中间记录“(low+high〉/2”-&gt;&gt;&gt; low + (high - low)*(key - a[low])/(a[high] - a[low]);<br>&emsp;&emsp;//这个的意思其实是low加上key在整个长度的比例乘以整个长度来作为其在序列的偏移量来作为二分查找中”mid”作为中间记录。</p>
+<p>-时间复杂度：O(log2(log2n))<br><em>算法实现</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">int insert_search(int *a,int key,int num)	//插值查找</span><br><span class="line">&#123;</span><br><span class="line">	int i,low,high;</span><br><span class="line">	static int mid;</span><br><span class="line">	low = 0; high = num-1;</span><br><span class="line">	int count = 1;</span><br><span class="line">	int b,k;</span><br><span class="line">	while(1)&#123;</span><br><span class="line">		if(num == 1)&#123;</span><br><span class="line">			if(a[low] == key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为： %d\n&quot;,low);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">			else&#123;</span><br><span class="line">				printf(&quot;没找到\n&quot;);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if(a[high] == a[low])&#123;</span><br><span class="line">			</span><br><span class="line">			if(a[low] == key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为： %d\n&quot;,low);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">			else&#123;</span><br><span class="line">				printf(&quot;没找到\n&quot;);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		mid = low + (high - low)*(key - a[low])/(a[high] - a[low]);</span><br><span class="line">		if(key == a[mid])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为: %d\n&quot;,mid);</span><br><span class="line">			b = mid - 1;k = mid + 1;</span><br><span class="line">			while(a[b]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,b);</span><br><span class="line">				b--;</span><br><span class="line">			&#125;</span><br><span class="line">			while(a[k]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,k);</span><br><span class="line">				k++;</span><br><span class="line">			&#125;</span><br><span class="line">			return count;			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		else if(high &lt;= low)&#123;</span><br><span class="line">			printf(&quot;没找到\n&quot;);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &lt; a[mid])&#123;</span><br><span class="line">			high = mid - 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &gt; a[mid])&#123;</span><br><span class="line">			low = mid + 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>优点:查找速度快,均匀查找比较快。<br>缺点:数组中如果分布非常不均匀，那么差值查找未必是很合适的选择。</p>
+<h5 id="分快查找"><a href="#分快查找" class="headerlink" title="分快查找"></a>分快查找</h5><p>&emsp;&emsp;分块查找是折半查找和顺序查找的一种改进方法，折半查找虽然具有很好的性能，但其前提条件时线性表顺序存储而且按照关键码排序，这一前提条件在结点树很大且表元素动态变化时是难以满足的。而顺序查找可以解决表元素动态变化的要求，但查找效率很低。如果既要保持对线性表的查找具有较快的速度，又要能够满足表元素动态变化的要求，则可采用分块查找的方法。</p>
+<div align="center">
+<img src=/img/算法/分块查找.png alt = "动图演示"/>
+</div>
+
+<p>时间复杂度：O(logn)<br><em>算法实现</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">int Part_block(int *a,int key,struct block *table)	//分块查找</span><br><span class="line">&#123;</span><br><span class="line">	int i = 0,count = 1;</span><br><span class="line">	while(key &gt; table[i].key)</span><br><span class="line">		i++;</span><br><span class="line"></span><br><span class="line">	while(table[i].start &lt;= table[i].end)&#123;</span><br><span class="line">		if(key == a[table[i].start])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为： %d\n&quot;,table[i].start);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else&#123;</span><br><span class="line">			table[i].start++;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	printf(&quot;没找到\n&quot;);</span><br><span class="line">	return count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int Max(int *a,int start,int end)	//查找块内最大值</span><br><span class="line">&#123;</span><br><span class="line">	int max;</span><br><span class="line">	max = a[start];</span><br><span class="line">	start += 1;</span><br><span class="line">	while(start &lt; end)&#123;</span><br><span class="line">		if(a[start] &gt; max)&#123;</span><br><span class="line">			max = a[start];</span><br><span class="line">			&#125;</span><br><span class="line">		start +=1;	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优点:无需进行大量移动。<br>缺点:要增加一个索引表的存储空间并对初始化索引表进行排序运算。适用情况:如果线性既要快速查找又经常动态变化，则可采用分块查找。</p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-OpenStack理解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" target="_blank">OpenStack理解</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" class="archive-article-date">
+        <time datetime="2020-05-30T14:04:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-30</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="PPT理解"><a href="#PPT理解" class="headerlink" title="PPT理解"></a>PPT理解</h5><div align="center">
+<img src=/img/算法/OpenStack.png alt = "动图演示"/>
+</div>
+
+
+<p>PPT下载：<a target="_blank" rel="noopener" href="https://gitee.com/lin-yaozong/dream-lin/blob/master/OpenStack%E6%94%B9%E6%94%B9%E6%9C%80%E7%BB%88%E6%9C%80%E7%9A%84%E7%BB%88.pptx">OpenStack核心组件理解</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/云计算//" class="article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/">展开全文 >></a>
     </p>
     
 
