@@ -459,6 +459,112 @@
 
 
   
+    <article id="post-铁路调度问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/10/21/%E9%93%81%E8%B7%AF%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98/" target="_blank">铁路调度问题</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/10/21/%E9%93%81%E8%B7%AF%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98/" class="archive-article-date">
+        <time datetime="2020-10-21T13:45:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-21</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h4 id="铁路调度问题-（–-递归-–-栈）"><a href="#铁路调度问题-（–-递归-–-栈）" class="headerlink" title="铁路调度问题 （– 递归 – 栈）"></a>铁路调度问题 （– 递归 – 栈）</h4><p><em><strong>面试题</strong></em> </p>
+<p>左边停了N个车厢，N个车厢依次编号为1-N。现希望通过中间的Y字型铁轨。将所有车厢拉到右边，所有车厢不允许走重复的路。</p>
+<div align="center">
+<img src=/img/算法/铁路调度问题.png alt = "演示"/>
+</div>
+
+<p><strong>C语言实现</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">问题：C语言编程。Y字形铁路如下图：</span><br><span class="line">	铁路调度问题</span><br><span class="line">	---》  ---》</span><br><span class="line">		| |</span><br><span class="line">		| |</span><br><span class="line">		| |</span><br><span class="line">		———</span><br><span class="line">	左边停了N个车厢，N个车厢依次编号为1-N。现希望通过中间的Y字型铁轨。将所有车厢拉到右边，所有车厢不允许走重复的路。</span><br><span class="line">	</span><br><span class="line">	请列出所有列车到右边铁路后，右边列车所有可能的排法</span><br><span class="line">解析：</span><br><span class="line">	1.可以将Y字型中间看作一个栈</span><br><span class="line">	2.每次都有只有两种处理方式：出栈/入栈。这是一种典型的递归问题</span><br><span class="line">算法：</span><br><span class="line">	根据解析可以用两重递归，入栈与出栈分别为一个递归。</span><br><span class="line">	条件：</span><br><span class="line">-- 进栈递归跳出条件为最后一个元素进栈，本题目可以用左侧编号=0表示，因为</span><br><span class="line">-- 出栈递归跳出条件为栈空</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">// 定义一个简单的栈类</span><br><span class="line">class myStack&#123;</span><br><span class="line">private:</span><br><span class="line">	int top;	/* 栈顶的下标 */</span><br><span class="line">	int *data;	/* 栈空间 */</span><br><span class="line">	</span><br><span class="line">public:</span><br><span class="line">	myStack( int n )&#123;</span><br><span class="line">		/* n为栈的大小 */</span><br><span class="line">		top = -1;</span><br><span class="line">		data = new int[n];</span><br><span class="line">	&#125;</span><br><span class="line">	~myStack()&#123;</span><br><span class="line">		delete [] data;</span><br><span class="line">	&#125;</span><br><span class="line">public:</span><br><span class="line">	/* 三个操作函数 省略容错处理(解本题目可省略) */</span><br><span class="line">	void push(int q)&#123;</span><br><span class="line">		top ++ ;</span><br><span class="line">		data[top] = q;</span><br><span class="line">	&#125;</span><br><span class="line">	bool isEmpty()&#123;</span><br><span class="line">		return top==-1?true:false;</span><br><span class="line">	&#125;</span><br><span class="line">	int pop()&#123;</span><br><span class="line">		return data[ top -- ];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">/* 	__process递归函数声明，提供process调用,再process下面定义</span><br><span class="line">参数都是记录当前处理的状态：</span><br><span class="line">	mystack  ----  Y字型中间栈的状态</span><br><span class="line">	pos   	-----  左侧待操作的车厢编号</span><br><span class="line">	path[]  -----  记录右侧轨道状态的数组，存储编号排列</span><br><span class="line">	curp	-----  记录右侧车厢数目</span><br><span class="line">  */</span><br><span class="line">void __process( myStack &amp;mystack , int pos , int path[] , int curp ); </span><br><span class="line"></span><br><span class="line">/* process函数，输入参数为左侧待操作车厢数目 */</span><br><span class="line">void process( int N )&#123;</span><br><span class="line"></span><br><span class="line">	myStack mystack(N);			/* 模拟Y字型中间栈 */</span><br><span class="line">	int path[N];				/* 存放右侧车厢编号排列 */</span><br><span class="line">	cout &lt;&lt; &quot;所有输出序列为：&quot;&lt;&lt; endl;</span><br><span class="line">	__process( mystack , N , path , 0 ); /* 第一次操作 */</span><br><span class="line">&#125;</span><br><span class="line">/*__process 函数 定义*/</span><br><span class="line">void __process( myStack &amp;mystack , int pos , int path[] , int curp )&#123;</span><br><span class="line">	</span><br><span class="line">	/* 每次操作都为 -- 两个选择，入栈以及出栈 */</span><br><span class="line">	// 1.入栈</span><br><span class="line">	if( pos &gt; 0 ) &#123; 		// 入栈条件，左侧有车厢，即pos&gt;0  </span><br><span class="line">		mystack.push( pos );  </span><br><span class="line">		__process(mystack , pos-1 , path , curp);</span><br><span class="line">							// 进行下一次抉择</span><br><span class="line">		mystack.pop(); 		// 恢复原状</span><br><span class="line">	&#125;</span><br><span class="line">	// 2.出栈</span><br><span class="line">	if(!mystack.isEmpty()) &#123;</span><br><span class="line">		int m = mystack.pop();	//把当前车厢出栈 	</span><br><span class="line">		path[curp] = m; 		// 出栈车厢放在右边</span><br><span class="line">		__process(mystack , pos , path , curp + 1 ); </span><br><span class="line">								// 进行下一次抉择</span><br><span class="line">		mystack.push(m); 		// 恢复原状</span><br><span class="line">	&#125;</span><br><span class="line">	// 3.最终 pos == 0 左侧无车厢 &amp;&amp; isEmpty 栈空，栈中无车厢 , 此时右侧调度完成，输出结果 </span><br><span class="line">	if( pos == 0 &amp;&amp; mystack.isEmpty() )&#123;</span><br><span class="line">		for( int i = curp-1 ; i &gt;= 0 ; i-- )&#123;</span><br><span class="line">			// 此时curp为 N ，车厢按照从左到右输出，最左侧为path最后一个元素</span><br><span class="line">			cout &lt;&lt; path[i] &lt;&lt; &quot; &quot; ;</span><br><span class="line">		&#125;</span><br><span class="line">		cout &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">int main()&#123;</span><br><span class="line">	int n ;</span><br><span class="line">	cout &lt;&lt; &quot;左侧车厢数量 ： &quot; ;</span><br><span class="line">	cin &gt;&gt; n;</span><br><span class="line">	process(n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44503344/article/details/107585925">https://blog.csdn.net/qq_44503344/article/details/107585925</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/10/21/%E9%93%81%E8%B7%AF%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-redis基础" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1520,130 +1626,10 @@
 
 
   
-    <article id="post-linux下U盘热拔插计文件copy" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
   
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/" target="_blank">Linux 下检测U盘插入及文件的Copy</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/" class="archive-article-date">
-        <time datetime="2020-05-11T12:21:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-11</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h2 id="Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝"><a href="#Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝" class="headerlink" title="Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝"></a>Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝</h2><h5 id="显而易见，实现这个功能需要以下3个步骤："><a href="#显而易见，实现这个功能需要以下3个步骤：" class="headerlink" title="显而易见，实现这个功能需要以下3个步骤："></a>显而易见，实现这个功能需要以下3个步骤：</h5><ul>
-<li>自动检测U盘的插入</li>
-<li>遍历U盘文件系统中所有文件</li>
-<li>拷贝指定格式的文件到你指定的路径下</li>
-</ul>
-<div align="center">
-<img src="https://img0.baidu.com/it/u=114066507,1510279020&fm=26&fmt=auto&gp=0.jpg" width = "400" height = "250" alt = "图片演示"/>
-</div>
-
-<hr>
-<h3 id="一、首先是实现对U盘插入的检测"><a href="#一、首先是实现对U盘插入的检测" class="headerlink" title="一、首先是实现对U盘插入的检测"></a>一、首先是实现对U盘插入的检测</h3><h5 id="这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入-热拔插-的监听。"><a href="#这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入-热拔插-的监听。" class="headerlink" title="这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入(热拔插)的监听。"></a>这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入(热拔插)的监听。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">    //初始化热插拔设备</span><br><span class="line">int hotplugSock_init()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hotplug sock init\n&quot;);</span><br><span class="line">    int ret;</span><br><span class="line">    const int buffersize = 1024;</span><br><span class="line">    struct sockaddr_nl snl;</span><br><span class="line">    bzero(&amp;snl, sizeof(struct sockaddr_nl));</span><br><span class="line">    snl.nl_family = AF_NETLINK;</span><br><span class="line">    snl.nl_pid = getpid();</span><br><span class="line">    snl.nl_groups = 1;</span><br><span class="line"></span><br><span class="line">    int usd = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);</span><br><span class="line">    if(usd == -1)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;socket&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    //设置与s套接字关联的选项</span><br><span class="line">    setsockopt(usd, SOL_SOCKET, SO_RCVBUF, &amp;buffersize, sizeof(buffersize));</span><br><span class="line"></span><br><span class="line">    //监听s套接字，也就是s设备</span><br><span class="line">    ret = bind(usd, (struct sockaddr *)&amp;snl, sizeof(struct sockaddr_nl));</span><br><span class="line">    if(ret &lt; 0)&#123;</span><br><span class="line">        perror(&quot;bind&quot;);</span><br><span class="line">        close(usd);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    return usd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h5 id="我们都知道，当有外部设备接入linux系统时，在其’-dev-‘目录中新增’-sd-‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。"><a href="#我们都知道，当有外部设备接入linux系统时，在其’-dev-‘目录中新增’-sd-‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。" class="headerlink" title="我们都知道，当有外部设备接入linux系统时，在其’ /dev ‘目录中新增’ sd* ‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。"></a>我们都知道，当有外部设备接入linux系统时，在其’ /dev ‘目录中新增’ sd* ‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">//挂载U盘文件</span><br><span class="line">void udisk_mount()</span><br><span class="line">&#123;</span><br><span class="line">    char buf[UEVENT_BUFFER_SIZE * 2] = &#123;0&#125;;</span><br><span class="line">    //初始化热插拔设备</span><br><span class="line">    int hotplug_sock = hotplugSock_init();</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line">        //阻塞等待U盘设备插入拔出</span><br><span class="line">        read(hotplug_sock, &amp;buf, sizeof(buf));</span><br><span class="line">	printf(&quot;%s\n&quot;, buf);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //U盘插入返回add@xxxxxx</span><br><span class="line">        if(strstr(buf, &quot;add@&quot;) != NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            //根据加载的设备名称挂载U盘</span><br><span class="line">            if(strstr(buf, &quot;sdb1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdb1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if(strstr(buf, &quot;sdc1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdc1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sdd1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdd1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sde1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sde1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sdf1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdf1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        else if(strstr(buf, &quot;remove@&quot;) != NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;uDisk remove......\n&quot;);</span><br><span class="line">            //U盘拔开返回remove@xxxxxx</span><br><span class="line">            umount(&quot;/media/udisk&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h5 id="通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add-名字的提取判断，于是开始对其遍历。"><a href="#通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add-名字的提取判断，于是开始对其遍历。" class="headerlink" title="通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add@名字的提取判断，于是开始对其遍历。"></a>通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add@名字的提取判断，于是开始对其遍历。</h5><h3 id="二，遍历U盘文件系统中的所有文件"><a href="#二，遍历U盘文件系统中的所有文件" class="headerlink" title="二，遍历U盘文件系统中的所有文件"></a>二，遍历U盘文件系统中的所有文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">int print_file_info(char *pathname)</span><br><span class="line">&#123;</span><br><span class="line">	struct stat filestat;</span><br><span class="line">	if(stat(pathname,&amp;filestat) == -1)</span><br><span class="line">	&#123;	</span><br><span class="line">		printf(&quot;cannot access the file %s\n&quot;,pathname);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">//	printf(&quot;%s %8ld\n&quot;,pathname,filestat.st_size);</span><br><span class="line">	//如果是目录，递归调用</span><br><span class="line">	if(((filestat.st_mode &amp; S_IFMT) == S_IFDIR) )</span><br><span class="line">	&#123;</span><br><span class="line">		dir_order(pathname);</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line">void dir_order(char *pathname)</span><br><span class="line">&#123;</span><br><span class="line">	DIR *dfd;</span><br><span class="line">	struct dirent *dp;</span><br><span class="line">	char name[MAX_PATH];</span><br><span class="line">	int flag;</span><br><span class="line">	if((dfd = opendir(pathname)) == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		perror(&quot;无法打开该目录\n&quot;);</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	while((dp = readdir(dfd)) != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		if(strncmp(dp-&gt;d_name,&quot;.&quot;,1) == 0)  //跳过以&#x27; . &#x27;开头的文件</span><br><span class="line">			continue;</span><br><span class="line">		if(strcmp(dp-&gt;d_name,&quot;LH&quot;) == 0)  //排除名为&#x27;LH&#x27;的文件</span><br><span class="line">			continue;</span><br><span class="line">		if(strlen(pathname) + strlen(dp-&gt;d_name) + 2 &gt; sizeof(name))</span><br><span class="line">			printf(&quot;遍历目录名:%s %s  太长\n&quot;,pathname,dp-&gt;d_name);</span><br><span class="line">		else </span><br><span class="line">			&#123;</span><br><span class="line">			memset(name ,0 , sizeof(name));</span><br><span class="line">			sprintf(name,&quot;%s/%s&quot;,pathname,dp-&gt;d_name);</span><br><span class="line">			flag = print_file_info(name);</span><br><span class="line">		</span><br><span class="line">			copy_file(name,flag,dp-&gt;d_name);//执行文件的复制</span><br><span class="line">			&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	closedir(dfd);	//尽头</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="在跳过文件以-‘-’-开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着-‘-‘-和-‘-‘-两个标识的“文件”，这是用来标记当前目录和上一级目录的。"><a href="#在跳过文件以-‘-’-开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着-‘-‘-和-‘-‘-两个标识的“文件”，这是用来标记当前目录和上一级目录的。" class="headerlink" title="在跳过文件以 ‘.’ 开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着 ‘ . ‘ 和 ‘ . . ‘ 两个标识的“文件”，这是用来标记当前目录和上一级目录的。"></a>在跳过文件以 ‘.’ 开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着 ‘ . ‘ 和 ‘ . . ‘ 两个标识的“文件”，这是用来标记当前目录和上一级目录的。</h5><h3 id="三、将U盘中的指定文件拷贝到linux文件系统指定的路径下"><a href="#三、将U盘中的指定文件拷贝到linux文件系统指定的路径下" class="headerlink" title="三、将U盘中的指定文件拷贝到linux文件系统指定的路径下"></a>三、将U盘中的指定文件拷贝到linux文件系统指定的路径下</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">void copy_file(char *name,int flag,char *filename)</span><br><span class="line">&#123;</span><br><span class="line">	int fd1,fd2;	/* fd1是遍历U盘中的文件标识符  fd2是要复制到特定路径下的文件标识符  */</span><br><span class="line">	char buf[5242880];</span><br><span class="line">	char dir[30];</span><br><span class="line">	char path[128];</span><br><span class="line">//	char *buf = (char*)malloc(sizeof(1048576));</span><br><span class="line">	memset(buf, 0 , sizeof(5242880));</span><br><span class="line">	memset(path, 0 , sizeof(128));</span><br><span class="line">	memset(dir, 0 , sizeof(30));</span><br><span class="line"></span><br><span class="line">	if((strcmp((name + strlen(name) - 3) , &quot;jpg&quot;) == 0) &amp;&amp; (flag == 0))</span><br><span class="line">	&#123;</span><br><span class="line">		strcpy(dir,&quot;/opt/udiskData/jpg&quot;);	</span><br><span class="line">		sprintf(path,&quot;%s/%s&quot;,dir,filename);</span><br><span class="line">		if((fd1 = open(name,O_RDONLY)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;打开U盘中的文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(read(fd1,buf,sizeof(buf)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;读取U盘文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if((fd2 = open(path,O_WRONLY | O_CREAT | O_TRUNC)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;打开特定文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(write(fd2,buf,sizeof(buf)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;写入buf中的内容到特定文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(close(fd1) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;关闭文件fd1失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(close(fd2) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;关闭文件fd2失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		printf(&quot;文件 %s 已经复制到 %s 中\n&quot;,filename,dir);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。"><a href="#这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。" class="headerlink" title="这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。"></a>这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。</h5><hr>
-<p>不足之处：这种文件操作方式为通过系统调用来对文件的open、read、wrire、close等IO操作，这是比较耗费时间的；在拷贝过渡阶段，这里是定义了一个处于段空间的内存来存储文件中的具体内容，后再进行转移，相对于想拷贝大一点的文件是不利的，也是对内存空间不友好的一种方式。这里最好是利用堆空间来进行文件内容的转移，但是尝试利用堆空间时出现拷贝出来的文件时无法正常打开显示的。目前的猜想是自己操作上的失误、或是对内存空间的了解不足，希望接下来可以攻克或是给予我宝贵的意见，谢谢！</p>
-<hr>
-<h3 id="结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。"><a href="#结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。" class="headerlink" title="结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。"></a>结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。</h3><div align="center">
-<img src="https://img1.baidu.com/it/u=3924999182,555195978&fm=26&fmt=auto&gp=0.jpg" width = "600" height = "400" alt = "图片演示"/>
-</div>
-
-<h3 id="由衷感谢！"><a href="#由衷感谢！" class="headerlink" title="由衷感谢！"></a>由衷感谢！</h3><div align="center">
-<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3512266800,3530185601&fm=26&gp=0.jpg" width = "300" height = "250" alt = "bilin"/>
-</div>
-
-
-<hr>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    </nav>
   
 
 

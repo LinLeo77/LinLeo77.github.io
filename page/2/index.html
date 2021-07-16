@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | Lin</title>
+  <title>Lin</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+    
+    <!-- <meta name="keywords" content="">
+    <meta name="description" content=""> -->
+  
   <meta property="og:type" content="website">
 <meta property="og:title" content="Lin">
-<meta property="og:url" content="http://example.com/archives/index.html">
+<meta property="og:url" content="http://example.com/page/2/index.html">
 <meta property="og:site_name" content="Lin">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Lin">
@@ -218,40 +222,76 @@
           </div>
           <div id="js-content" class="content-ll">
             
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/09/30/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="archive-article-date">
-        <time datetime="2021-09-30T14:34:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-30</time>
-</a>
 
-        </div>
-    	 
+  
+    <article id="post-linux下U盘热拔插计文件copy" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
   
     <h1 itemprop="name">
 	
-	  <a class="archive-article-title" href="/2021/09/30/%E5%9F%BA%E4%BA%8EHTTP%E6%90%AD%E5%BB%BA%E7%9A%84web%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank">基于HTTP搭建的web服务器</a>
+	  <a class="article-title" href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/" target="_blank">Linux 下检测U盘插入及文件的Copy</a>
   
     </h1>
   
 
 
-        <div class="article-info info-on-right">
-          
+  
+  
+<a href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/" class="archive-article-date">
+        <time datetime="2020-05-11T12:21:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-11</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝"><a href="#Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝" class="headerlink" title="Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝"></a>Linux下自动识别U盘的插入，并挂载到指定路径下，实现指定文件的自动拷贝</h2><h5 id="显而易见，实现这个功能需要以下3个步骤："><a href="#显而易见，实现这个功能需要以下3个步骤：" class="headerlink" title="显而易见，实现这个功能需要以下3个步骤："></a>显而易见，实现这个功能需要以下3个步骤：</h5><ul>
+<li>自动检测U盘的插入</li>
+<li>遍历U盘文件系统中所有文件</li>
+<li>拷贝指定格式的文件到你指定的路径下</li>
+</ul>
+<div align="center">
+<img src="https://img0.baidu.com/it/u=114066507,1510279020&fm=26&fmt=auto&gp=0.jpg" width = "400" height = "250" alt = "图片演示"/>
+</div>
+
+<hr>
+<h3 id="一、首先是实现对U盘插入的检测"><a href="#一、首先是实现对U盘插入的检测" class="headerlink" title="一、首先是实现对U盘插入的检测"></a>一、首先是实现对U盘插入的检测</h3><h5 id="这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入-热拔插-的监听。"><a href="#这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入-热拔插-的监听。" class="headerlink" title="这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入(热拔插)的监听。"></a>这里采用的方式是利用监听socket套接字文件的方式实现对U盘插入(热拔插)的监听。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">    //初始化热插拔设备</span><br><span class="line">int hotplugSock_init()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hotplug sock init\n&quot;);</span><br><span class="line">    int ret;</span><br><span class="line">    const int buffersize = 1024;</span><br><span class="line">    struct sockaddr_nl snl;</span><br><span class="line">    bzero(&amp;snl, sizeof(struct sockaddr_nl));</span><br><span class="line">    snl.nl_family = AF_NETLINK;</span><br><span class="line">    snl.nl_pid = getpid();</span><br><span class="line">    snl.nl_groups = 1;</span><br><span class="line"></span><br><span class="line">    int usd = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);</span><br><span class="line">    if(usd == -1)</span><br><span class="line">    &#123;</span><br><span class="line">        perror(&quot;socket&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    //设置与s套接字关联的选项</span><br><span class="line">    setsockopt(usd, SOL_SOCKET, SO_RCVBUF, &amp;buffersize, sizeof(buffersize));</span><br><span class="line"></span><br><span class="line">    //监听s套接字，也就是s设备</span><br><span class="line">    ret = bind(usd, (struct sockaddr *)&amp;snl, sizeof(struct sockaddr_nl));</span><br><span class="line">    if(ret &lt; 0)&#123;</span><br><span class="line">        perror(&quot;bind&quot;);</span><br><span class="line">        close(usd);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    return usd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="我们都知道，当有外部设备接入linux系统时，在其’-dev-‘目录中新增’-sd-‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。"><a href="#我们都知道，当有外部设备接入linux系统时，在其’-dev-‘目录中新增’-sd-‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。" class="headerlink" title="我们都知道，当有外部设备接入linux系统时，在其’ /dev ‘目录中新增’ sd* ‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。"></a>我们都知道，当有外部设备接入linux系统时，在其’ /dev ‘目录中新增’ sd* ‘类文件，由于插入设备后产生的文件名是不确定的，接下来，用了一个比较“笨”的容错方法，实现对其文件名的判断。</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">//挂载U盘文件</span><br><span class="line">void udisk_mount()</span><br><span class="line">&#123;</span><br><span class="line">    char buf[UEVENT_BUFFER_SIZE * 2] = &#123;0&#125;;</span><br><span class="line">    //初始化热插拔设备</span><br><span class="line">    int hotplug_sock = hotplugSock_init();</span><br><span class="line"></span><br><span class="line">    while(1)</span><br><span class="line">    &#123;</span><br><span class="line">        //阻塞等待U盘设备插入拔出</span><br><span class="line">        read(hotplug_sock, &amp;buf, sizeof(buf));</span><br><span class="line">	printf(&quot;%s\n&quot;, buf);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        //U盘插入返回add@xxxxxx</span><br><span class="line">        if(strstr(buf, &quot;add@&quot;) != NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            //根据加载的设备名称挂载U盘</span><br><span class="line">            if(strstr(buf, &quot;sdb1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdb1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if(strstr(buf, &quot;sdc1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdc1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sdd1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdd1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sde1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sde1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if(strstr(buf, &quot;sdf1&quot;) != NULL)</span><br><span class="line">            &#123;</span><br><span class="line">                printf(&quot;uDisk insert......\n&quot;);</span><br><span class="line">                mount(&quot;/dev/sdf1&quot;, &quot;/media/udisk&quot;, &quot;vfat&quot;, MS_LAZYTIME, NULL);</span><br><span class="line">		        dir_order(&quot;/media/udisk&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        else if(strstr(buf, &quot;remove@&quot;) != NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;uDisk remove......\n&quot;);</span><br><span class="line">            //U盘拔开返回remove@xxxxxx</span><br><span class="line">            umount(&quot;/media/udisk&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add-名字的提取判断，于是开始对其遍历。"><a href="#通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add-名字的提取判断，于是开始对其遍历。" class="headerlink" title="通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add@名字的提取判断，于是开始对其遍历。"></a>通过监听socket设备函数，返回得到整型的文件描述符，对其进行解析即可实现U盘的拔插检测，然后再进行add@名字的提取判断，于是开始对其遍历。</h5><h3 id="二，遍历U盘文件系统中的所有文件"><a href="#二，遍历U盘文件系统中的所有文件" class="headerlink" title="二，遍历U盘文件系统中的所有文件"></a>二，遍历U盘文件系统中的所有文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">int print_file_info(char *pathname)</span><br><span class="line">&#123;</span><br><span class="line">	struct stat filestat;</span><br><span class="line">	if(stat(pathname,&amp;filestat) == -1)</span><br><span class="line">	&#123;	</span><br><span class="line">		printf(&quot;cannot access the file %s\n&quot;,pathname);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">//	printf(&quot;%s %8ld\n&quot;,pathname,filestat.st_size);</span><br><span class="line">	//如果是目录，递归调用</span><br><span class="line">	if(((filestat.st_mode &amp; S_IFMT) == S_IFDIR) )</span><br><span class="line">	&#123;</span><br><span class="line">		dir_order(pathname);</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line">void dir_order(char *pathname)</span><br><span class="line">&#123;</span><br><span class="line">	DIR *dfd;</span><br><span class="line">	struct dirent *dp;</span><br><span class="line">	char name[MAX_PATH];</span><br><span class="line">	int flag;</span><br><span class="line">	if((dfd = opendir(pathname)) == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		perror(&quot;无法打开该目录\n&quot;);</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	while((dp = readdir(dfd)) != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		if(strncmp(dp-&gt;d_name,&quot;.&quot;,1) == 0)  //跳过以&#x27; . &#x27;开头的文件</span><br><span class="line">			continue;</span><br><span class="line">		if(strcmp(dp-&gt;d_name,&quot;LH&quot;) == 0)  //排除名为&#x27;LH&#x27;的文件</span><br><span class="line">			continue;</span><br><span class="line">		if(strlen(pathname) + strlen(dp-&gt;d_name) + 2 &gt; sizeof(name))</span><br><span class="line">			printf(&quot;遍历目录名:%s %s  太长\n&quot;,pathname,dp-&gt;d_name);</span><br><span class="line">		else </span><br><span class="line">			&#123;</span><br><span class="line">			memset(name ,0 , sizeof(name));</span><br><span class="line">			sprintf(name,&quot;%s/%s&quot;,pathname,dp-&gt;d_name);</span><br><span class="line">			flag = print_file_info(name);</span><br><span class="line">		</span><br><span class="line">			copy_file(name,flag,dp-&gt;d_name);//执行文件的复制</span><br><span class="line">			&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	closedir(dfd);	//尽头</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="在跳过文件以-‘-’-开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着-‘-‘-和-‘-‘-两个标识的“文件”，这是用来标记当前目录和上一级目录的。"><a href="#在跳过文件以-‘-’-开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着-‘-‘-和-‘-‘-两个标识的“文件”，这是用来标记当前目录和上一级目录的。" class="headerlink" title="在跳过文件以 ‘.’ 开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着 ‘ . ‘ 和 ‘ . . ‘ 两个标识的“文件”，这是用来标记当前目录和上一级目录的。"></a>在跳过文件以 ‘.’ 开头文件的操作中，我们知道，linux文件系统下，除了该目录下所有实体文件，还存在着 ‘ . ‘ 和 ‘ . . ‘ 两个标识的“文件”，这是用来标记当前目录和上一级目录的。</h5><h3 id="三、将U盘中的指定文件拷贝到linux文件系统指定的路径下"><a href="#三、将U盘中的指定文件拷贝到linux文件系统指定的路径下" class="headerlink" title="三、将U盘中的指定文件拷贝到linux文件系统指定的路径下"></a>三、将U盘中的指定文件拷贝到linux文件系统指定的路径下</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">void copy_file(char *name,int flag,char *filename)</span><br><span class="line">&#123;</span><br><span class="line">	int fd1,fd2;	/* fd1是遍历U盘中的文件标识符  fd2是要复制到特定路径下的文件标识符  */</span><br><span class="line">	char buf[5242880];</span><br><span class="line">	char dir[30];</span><br><span class="line">	char path[128];</span><br><span class="line">//	char *buf = (char*)malloc(sizeof(1048576));</span><br><span class="line">	memset(buf, 0 , sizeof(5242880));</span><br><span class="line">	memset(path, 0 , sizeof(128));</span><br><span class="line">	memset(dir, 0 , sizeof(30));</span><br><span class="line"></span><br><span class="line">	if((strcmp((name + strlen(name) - 3) , &quot;jpg&quot;) == 0) &amp;&amp; (flag == 0))</span><br><span class="line">	&#123;</span><br><span class="line">		strcpy(dir,&quot;/opt/udiskData/jpg&quot;);	</span><br><span class="line">		sprintf(path,&quot;%s/%s&quot;,dir,filename);</span><br><span class="line">		if((fd1 = open(name,O_RDONLY)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;打开U盘中的文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(read(fd1,buf,sizeof(buf)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;读取U盘文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if((fd2 = open(path,O_WRONLY | O_CREAT | O_TRUNC)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;打开特定文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(write(fd2,buf,sizeof(buf)) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;写入buf中的内容到特定文件失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(close(fd1) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;关闭文件fd1失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		if(close(fd2) == -1)</span><br><span class="line">		&#123;</span><br><span class="line">			perror(&quot;关闭文件fd2失败\n&quot;);</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		printf(&quot;文件 %s 已经复制到 %s 中\n&quot;,filename,dir);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。"><a href="#这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。" class="headerlink" title="这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。"></a>这里只是实现将U盘中jpg文件拷贝，如果需要拷贝其他类型的文件只需要修改后缀名即可。</h5><hr>
+<p>不足之处：这种文件操作方式为通过系统调用来对文件的open、read、wrire、close等IO操作，这是比较耗费时间的；在拷贝过渡阶段，这里是定义了一个处于段空间的内存来存储文件中的具体内容，后再进行转移，相对于想拷贝大一点的文件是不利的，也是对内存空间不友好的一种方式。这里最好是利用堆空间来进行文件内容的转移，但是尝试利用堆空间时出现拷贝出来的文件时无法正常打开显示的。目前的猜想是自己操作上的失误、或是对内存空间的了解不足，希望接下来可以攻克或是给予我宝贵的意见，谢谢！</p>
+<hr>
+<h3 id="结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。"><a href="#结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。" class="headerlink" title="结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。"></a>结语：只是一个小小的项目，却可以充分运用到文件的IO编程知识。</h3><div align="center">
+<img src="https://img1.baidu.com/it/u=3924999182,555195978&fm=26&fmt=auto&gp=0.jpg" width = "600" height = "400" alt = "图片演示"/>
+</div>
+
+<h3 id="由衷感谢！"><a href="#由衷感谢！" class="headerlink" title="由衷感谢！"></a>由衷感谢！</h3><div align="center">
+<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3512266800,3530185601&fm=26&gp=0.jpg" width = "300" height = "250" alt = "bilin"/>
+</div>
+
+
+<hr>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -263,7 +303,7 @@
 		</ul>
 	</div>
 
-          
+    
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -276,515 +316,41 @@
 	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/05/30/%E5%AF%B9epoll%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%83%A8%E6%9B%B2%E7%9A%84%E5%8E%9F%E7%90%86%E7%90%86%E8%A7%A3%EF%BC%88%E5%9B%BE%E8%A7%A3%EF%BC%89/" class="archive-article-date">
-        <time datetime="2021-05-30T14:04:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-30</time>
-</a>
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2021/05/30/%E5%AF%B9epoll%E5%AE%9E%E7%8E%B0%E4%B8%89%E9%83%A8%E6%9B%B2%E7%9A%84%E5%8E%9F%E7%90%86%E7%90%86%E8%A7%A3%EF%BC%88%E5%9B%BE%E8%A7%A3%EF%BC%89/" target="_blank">对epoll实现三部曲的原理理解（图解）</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/10/21/%E9%93%81%E8%B7%AF%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98/" class="archive-article-date">
-        <time datetime="2020-10-21T13:45:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-21</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/10/21/%E9%93%81%E8%B7%AF%E8%B0%83%E5%BA%A6%E9%97%AE%E9%A2%98/" target="_blank">铁路调度问题</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/10/03/redis%E5%9F%BA%E7%A1%80/" class="archive-article-date">
-        <time datetime="2020-10-03T15:32:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-03</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/10/03/redis%E5%9F%BA%E7%A1%80/" target="_blank">Redis数据库基础理解</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/数据库//" class="article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/10/03/%E7%9F%A5%E4%B8%89%E7%82%B9%E6%B1%82%E5%9C%86%E5%BF%83/" class="archive-article-date">
-        <time datetime="2020-10-03T15:32:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-03</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/10/03/%E7%9F%A5%E4%B8%89%E7%82%B9%E6%B1%82%E5%9C%86%E5%BF%83/" target="_blank">已知三点的坐标，求圆心坐标</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/" class="archive-article-date">
-        <time datetime="2020-06-23T12:48:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-23</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/" target="_blank">线程池技术实现多线程copy功能</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" class="archive-article-date">
-        <time datetime="2020-06-03T11:42:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-03</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" target="_blank">查找算法</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" class="archive-article-date">
-        <time datetime="2020-05-30T14:04:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-30</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" target="_blank">OpenStack理解</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">云计算</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/云计算//" class="article-tag-list-link color4">云计算</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/05/24/%E6%8E%92%E5%BA%8F/" class="archive-article-date">
-        <time datetime="2020-05-24T03:51:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-24</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/05/24/%E6%8E%92%E5%BA%8F/" target="_blank">Linux C语言10钟排序算法</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2020/05/21/hadoop%E7%9A%84%E5%9F%BA%E7%A1%80%E9%83%A8%E7%BD%B2/" class="archive-article-date">
-        <time datetime="2020-05-21T04:47:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-21</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2020/05/21/hadoop%E7%9A%84%E5%9F%BA%E7%A1%80%E9%83%A8%E7%BD%B2/" target="_blank">hadoop的基础部署与基础使用</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">云计算</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/云计算//" class="article-tag-list-link color4">云计算</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
-  
-
-    
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
     </nav>
   
 
@@ -826,9 +392,9 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
-		isArchive: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
