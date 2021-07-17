@@ -224,6 +224,198 @@
             
 
   
+    <article id="post-hadoop的基础部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/05/21/hadoop%E7%9A%84%E5%9F%BA%E7%A1%80%E9%83%A8%E7%BD%B2/" target="_blank">hadoop的基础部署与基础使用</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/05/21/hadoop%E7%9A%84%E5%9F%BA%E7%A1%80%E9%83%A8%E7%BD%B2/" class="archive-article-date">
+        <time datetime="2020-05-21T04:47:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-21</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="准备工作："><a href="#准备工作：" class="headerlink" title="准备工作："></a>准备工作：</h5><p>&emsp;&emsp;首先要准备好的两个包：jdk及Hadoop的安装包(压缩包)；本人在这使用的版本是jdk1.8.0_281和hadoop-2.10.1。<br>需要前往官网选择版本自行下载：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">jdk</a></li>
+<li><a target="_blank" rel="noopener" href="https://archive.apache.org/dist/hadoop/common/">hadoop</a></li>
+</ul>
+<h5 id="一台机器准备基本的运行环境"><a href="#一台机器准备基本的运行环境" class="headerlink" title="一台机器准备基本的运行环境"></a>一台机器准备基本的运行环境</h5><ol>
+<li>修改机器名<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su root</span><br><span class="line">gedit /etc/hostname</span><br></pre></td></tr></table></figure>
+在打开的文件中输入cMaster，并保存</li>
+<li>添加域名映射<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#ifconfig</span><br></pre></td></tr></table></figure>
+(如无法识别命令，按照提示安装相关包)<br>查看本机IP地址<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#gedit /etc/hosts</span><br></pre></td></tr></table></figure>
+在打开的文件中输入 192.168.***   cMaster，并保存</li>
+<li>关闭防火墙<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#sudo ufw disable</span><br></pre></td></tr></table></figure></li>
+<li>安装JDK<br>(1)将JDK安装包拷贝的某个文件夹下，如/home/Downloads（从主机文件拖拽即可）<br>(2)解压缩 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$tar -zxvf /home/Downloads/jdk1.8.0_***</span><br></pre></td></tr></table></figure>
+解压完成之后寻找jdk安装的位置，通常在 /home/cmaster/jdk1.8.0***<br>(3)设置环境变量<br>编辑profile文件  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$gedit /etc/profile</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>打开文件后， 在文件尾部加入以下内容并保存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/home/cmaster/jdk1.8.0_281（刚才确定的jdk安装位置）</span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre  </span><br><span class="line">export CLASSPATH=.:$&#123;JAVA_HOME&#125;/lib:$&#123;JRE_HOME&#125;/lib  </span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$PATH</span><br></pre></td></tr></table></figure>
+<p>(4)执行 $source /etc/profile，使环境变量生效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$java -version</span><br></pre></td></tr></table></figure>
+<p>检测是否安装成功</p>
+<h5 id="三台机器准备基本的运行环境，分别按照以上步骤操作"><a href="#三台机器准备基本的运行环境，分别按照以上步骤操作" class="headerlink" title="三台机器准备基本的运行环境，分别按照以上步骤操作"></a>三台机器准备基本的运行环境，分别按照以上步骤操作</h5><p><strong>注意：</strong></p>
+<ol>
+<li><p>   添加域名映射时将三台机器的ip地址均加入域名映射中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">192.168.229.135  cMaster  （机器的IP地址用#ifconfig命令查询）</span><br><span class="line">192.168.229.133  cSlave0</span><br><span class="line">192.168.229.134  cSlave1</span><br></pre></td></tr></table></figure>
+<p>（使用<code>#gedit /etc/hosts</code>命令打开文件加入以上内容，并保存）</p>
+</li>
+<li><p>   检测设置是否完成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#ping cSlave0</span><br></pre></td></tr></table></figure>
+<p>在以上三台机器上采用解压包方式部署Hadoop，cMaster作为主节点，cSlave0和cSlave1作为从节点。<br>先按照上一题的步骤分别准备三台机器的环境。</p>
+<h5 id="接着部署Hadoop"><a href="#接着部署Hadoop" class="headerlink" title="接着部署Hadoop"></a>接着部署Hadoop</h5></li>
+<li><p>将下载的hadoop安装包复制到某个文件夹下<br>在ubuntu中直接从主机拖拽文件即可，存入某个路径<br>如：/home/cslave1/Downloads/hadoop-2.10.1.tar.gz  </p>
+</li>
+<li><p>解压缩</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#tar -zxvf /home/ cslave1/Downloads/hadoop-2.10.1.tar.gz </span><br></pre></td></tr></table></figure>
+<p>（注意解压缩的路径就是执行此命令时所处的路径）</p>
+</li>
+<li><p>找到hadoop解压缩的文件位置，找到文件<br>/home/csalve1/Hadoop-2.10.1/etc/Hadoop/Hadoop-env.sh<br>修改hadoop-env.sh文件中的JAVA_HOME的取值<br>打开文件，找到一行  <code>export JAVA_HOME=$&#123;JAVA_HOME&#125;</code>，修改<code>$&#123;JAVA_HOME&#125;</code>的值为实际的JAVA_HOME值(此处的JAVA_HOME即为安装JDK中的环境变量设置值，例如<br><code>export JAVA_HOME=/home/cmaster/jdk1.8.0_281)</code><br>保存并退出</p>
+</li>
+<li><p>设置环境变量<br>编辑profile文件 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$gedit /etc/profile </span><br></pre></td></tr></table></figure>
+<p>更新环境变量PATH的取值，将hadoop安装包下的子文件夹bin和sbin路径加入PATH取值中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export HADOOP_HOME=/home/cmaster/hadoop-2.10.1（刚才确定的hadoop安装位置）</span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin: $&#123;HADOOP_HOME&#125;/bin: $&#123;HADOOP_HOME&#125;/sbin:$PATH</span><br></pre></td></tr></table></figure>
+<p>（这一步的目的是为了能在任何路径下调用Hadoop的命令）<br>（也可编辑文件$gedit /etc/environment，PATH的取值分别加入Java安装包下的子文件夹bin的路径，和hadoop安装包下的子文件夹bin的路径）</p>
+</li>
+<li><p>测试Hadoop是否安装成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$hadoop version</span><br></pre></td></tr></table></figure></li>
+<li><p>配置Hadoop（三台机器都做如下操作）<br>(1) 编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#gedit  /****（你的Hadoop安装包路径）/Hadoop-2.10.1/etc/hadoop/core-site.xml</span><br></pre></td></tr></table></figure>
+<p>将如下内容嵌入configuration标签内</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt;</span><br><span class="line">   &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">   &lt;value&gt;/home/***(此处为你的用户名)/cloudData&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">   &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">   &lt;value&gt;hdfs://cMaster:8020&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>(2) 编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#gedit  /****（你的Hadoop安装包路径）/Hadoop-2.10.1/etc/hadoop/yarn-site.xml</span><br></pre></td></tr></table></figure>
+<p>将如下内容嵌入configuration标签内</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt;</span><br><span class="line">  &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">  &lt;value&gt;cMaster&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">  &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">  &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>(3)找到以下文件<br>/****（你的Hadoop安装包路径）/Hadoop-2.10.1/etc/hadoop/mapred-site.xml.template，去掉文件名后缀.template，并编辑</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#gedit  /****（你的Hadoop安装包路径）/Hadoop-2.10.1/etc/hadoop/mapred-site.xml</span><br></pre></td></tr></table></figure>
+<p>将如下内容嵌入configuration标签内</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;property&gt; </span><br><span class="line">  &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">  &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>(4) 编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#gedit  /****</span><br></pre></td></tr></table></figure>
+<p>（你的Hadoop安装包路径）/Hadoop-2.10.1/etc/hadoop/slaves<br>将从节点的主机名加入文件</p>
+</li>
+</ol>
+<p><strong>cSlave0</strong><br><strong>cSlave1</strong></p>
+<ol start="7">
+<li><p>启动Hadoop<br>(1) 在主节点cMaster上格式化主节点命名空间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hdfs namenode -format</span><br></pre></td></tr></table></figure>
+<p>(2)在主节点cMaster上启动存储主服务namenode和资源管理主服务器 resourcemanager</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#hadoop-daemon.sh start namenode</span><br><span class="line">#yarn-daemon.sh start resourcemanager</span><br></pre></td></tr></table></figure>
+<p>(3) 在两台从节点（cSlave0和cSlave1）上启动存储从服务datanode和资源管理从服务 nodemanager</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#hadoop-daemon.sh start datanode</span><br><span class="line">#yarn-daemon.sh start nodemanager</span><br></pre></td></tr></table></figure></li>
+<li><p>测试Hadoop<br>(1) 在主节点cMaster上执行命令jps<br>会看到类似的如下信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">3065  ResourceManager</span><br><span class="line">2347  Namenode</span><br></pre></td></tr></table></figure>
+<p>(2) 在两台主节点上执行命令jps<br>会看到类似的如下信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4021  Datanode</span><br><span class="line">2761  NodeManager</span><br></pre></td></tr></table></figure>
+<p>(3) 任选一台机器，在浏览器地址栏输入“cMaster:50070”，可以在Web界面看到HDFS的相关信息；输入“cMaster:8080”，可以看到Yarn相关信息</p>
+</li>
+</ol>
+<h5 id="使用创建好的集群，尝试下列操作："><a href="#使用创建好的集群，尝试下列操作：" class="headerlink" title="使用创建好的集群，尝试下列操作："></a>使用创建好的集群，尝试下列操作：</h5><p>（1）    使用hadoop命令在集群中新建文件夹“/in”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hdfs dfs -mkdir /in</span><br></pre></td></tr></table></figure>
+<p>（2）将cMaster上“/****(你的hadoop安装路径)/hadoop-2.10.1/etc/hadoop/core-site.xml”文件上传至集群的文件夹“/in”下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hdfs dfs -put  /****(你的hadoop安装路径)/hadoop-2.10.1/etc/hadoop/core-site.xml /in</span><br></pre></td></tr></table></figure>
+<p>（3）使用Hadoop自带的示例程序WordCount，统计“/in”下每个单词的出现次数，并将结果存入“/out”目录。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hadoop jar /****(你的hadoop安装路径) /hadoop-2.10.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.10.1.jar wordcount /in  /out/wc-01</span><br></pre></td></tr></table></figure>
+<p>（4）打开浏览器cMaster:8088，会看到Web界面显示正在运行的WordCount信息。</p>
+<p>（5）打开cMaster:50070点击 utilities-&gt;Browse the filesystem，会看到刚才的输入数据文件夹 /in，和输出结果数据文件夹 /out/wc-01/part-r/00000</p>
+<p>（6）用命令行查看输入文件的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hdfs dfs -cat /in/*</span><br></pre></td></tr></table></figure>
+
+<p>查看输出文件的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#hdfs dfs -cat /out/wc-01/*</span><br></pre></td></tr></table></figure>
+
+<hr>
+<div align="center">
+<img src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3355464299,584008140&fm=26&gp=0.jpg" width = "300" height = "250" alt = "图片"/>
+</div>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/云计算//" class="article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/05/21/hadoop%E7%9A%84%E5%9F%BA%E7%A1%80%E9%83%A8%E7%BD%B2/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-linux下U盘热拔插计文件copy" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
