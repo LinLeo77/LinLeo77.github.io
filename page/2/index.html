@@ -224,6 +224,372 @@
             
 
   
+    <article id="post-OpenStack理解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" target="_blank">OpenStack理解</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/" class="archive-article-date">
+        <time datetime="2020-05-30T14:04:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-30</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="PPT理解"><a href="#PPT理解" class="headerlink" title="PPT理解"></a>PPT理解</h5><div align="center">
+<img src=/img/算法/OpenStack.png alt = "动图演示"/>
+</div>
+
+
+<p>PPT下载：<a target="_blank" rel="noopener" href="https://gitee.com/lin-yaozong/dream-lin/blob/master/OpenStack.pptx">OpenStack核心组件理解</a></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/云计算//" class="article-tag-list-link color4">云计算</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/05/30/OpenStack%E7%90%86%E8%A7%A3/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-排序" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2020/05/24/%E6%8E%92%E5%BA%8F/" target="_blank">Linux C语言10钟排序算法</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2020/05/24/%E6%8E%92%E5%BA%8F/" class="archive-article-date">
+        <time datetime="2020-05-24T03:51:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-24</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h3 id="介绍常见的10种常见的排序算法-C语言实现"><a href="#介绍常见的10种常见的排序算法-C语言实现" class="headerlink" title="介绍常见的10种常见的排序算法(C语言实现)"></a>介绍常见的10种常见的排序算法(C语言实现)</h3><hr>
+<h4 id="1-冒泡排序"><a href="#1-冒泡排序" class="headerlink" title="1. 冒泡排序"></a>1. 冒泡排序</h4><div align="center">
+<img src=/img/10种算法GIF/1、冒泡排序.gif alt = "动图演示"/>
+</div>
+
+<p>冒泡排序算法的原理如下：<br>（1）比较相邻的元素。如果第一个比第二个大，就交换他们两个。<br>（2）对每一对相邻元素做同样的工作，从开始第一对到结尾的最后一对。在这一点，最后的元素应该会是最大的数。<br>（3）针对所有的元素重复以上的步骤，除了最后一个。<br>（4）持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</p>
+<p><strong>时间复杂度:O(n²)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void Maopao_sort(int *a,int num)	//冒泡排序</span><br><span class="line">&#123;</span><br><span class="line">	int i,j,temp;</span><br><span class="line">	for(i=0;i&lt;num-1;i++)&#123;</span><br><span class="line">		for(j=0;j&lt;num-i-1;j++)&#123;</span><br><span class="line">			if(a[j] &gt; a[j+1])&#123;</span><br><span class="line">				temp = a[j];</span><br><span class="line">				a[j] = a[j+1];</span><br><span class="line">				a[j+1] = temp;</span><br><span class="line">			&#125;	</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-选择排序"><a href="#2-选择排序" class="headerlink" title="2. 选择排序"></a>2. 选择排序</h4><div align="center">
+<img src=/img/10种算法GIF/2.选择排序.gif alt = "动图演示"/>
+</div>
+
+<p>选择排序算法的原理如下：<br>（1）首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置。<br>（2）再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。<br>（3）重复第二步，直到所有元素均排序完毕。</p>
+<p><strong>时间复杂度:O(n²)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void Select_sort(int *a,int num)	//选择排序</span><br><span class="line">&#123;</span><br><span class="line">	int i,j,m;</span><br><span class="line">	int temp;</span><br><span class="line">	for(i=0;i&lt;num;i++)&#123;</span><br><span class="line">		m = i;	//记录每轮第一个的坐标</span><br><span class="line">		for(j = i+1;j&lt;num;j++)&#123;		//遍历找出最小值的下标</span><br><span class="line">			if(a[j] &lt; a[m])</span><br><span class="line">				m = j;		//更新最小下标值</span><br><span class="line">		&#125;</span><br><span class="line">		temp = a[i];		//交换每轮第一个值 和 找到的最小下标的值</span><br><span class="line">		a[i] = a[m];</span><br><span class="line">		a[m] = temp;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="3-插入排序"><a href="#3-插入排序" class="headerlink" title="3. 插入排序"></a>3. 插入排序</h4><div align="center">
+<img src=/img/10种算法GIF/3、插入排序.gif alt = "动图演示"/>
+</div>
+
+<p>插入排序算法原理如下：<br>（1）从第2个数开始，和前面的一个数比较，如果比它小，交换两个数；<br>（2）然后再与前面一个数比较，类推。。。直到当前数比它之前的数更大时或者当前数已经是第一个数时，停止循环，接着对下一个数进行插入操作，重复上述过程，直到对最后一个数进行完了插入操作，排序完成。</p>
+<p><strong>时间复杂度:O(n²)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">void Insert_sort(int *a ,int num)	//插入排序</span><br><span class="line">&#123;</span><br><span class="line">	int i,j;</span><br><span class="line">	int temp;</span><br><span class="line">	for(i=1;i&lt;num;i++)&#123;	</span><br><span class="line">		temp = a[i];	//将一个值标记为目标点</span><br><span class="line">		for(j=i-1; j&gt;=0 &amp;&amp; temp&lt;a[j] ; j--)&#123;		//往目标值的前方遍历 执行条件为下标大于零 和 标记点小于遍历的点</span><br><span class="line">			a[j+1] = a[j];		//符合上式条件，往后平移</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">		a[j+1] = temp;	//不满足后，将标记点值赋予最后的平移位置</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-希尔排序"><a href="#4-希尔排序" class="headerlink" title="4. 希尔排序"></a>4. 希尔排序</h4><div align="center">
+<img src=/img/10种算法GIF/4.希尔排序.gif alt = "动图演示"/>
+</div>
+
+<p>希尔排序算法原理如下：<br>（1）把序列按下标的一定增量分组，对每组使用直接插入排序算法排序；随着增量的逐渐减少，每组包含的关键词越来越多，当增量减至1时，整个序列恰好被分为一组，算法便终止。<br>（2）希尔排序需要定义一个增量，这里选择增量为gap=length/2，缩小增量以gap=gap/2的方式，最后还需调用插入排序。</p>
+<p><strong>时间复杂度:O(n^1.25)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">void Shell_sort(int *a,int num)		//希尔排序</span><br><span class="line">&#123;</span><br><span class="line">	int half = num/2;</span><br><span class="line">	int temp,i,j;</span><br><span class="line">	for(i = 0;i&lt;half;i++)&#123;</span><br><span class="line">		if(a[i] &gt; a[i+half])&#123;</span><br><span class="line">			temp = a[i];</span><br><span class="line">			a[i] = a[i+half];</span><br><span class="line">			a[i+half] = a[i];</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	for(j = 0;j&lt;2;j++)&#123;</span><br><span class="line">		for(i = j;i&lt;num-2;i+=2)&#123;</span><br><span class="line">			if(a[i] &gt; a[i+2])&#123;</span><br><span class="line">				temp = a[i];</span><br><span class="line">				a[i] = a[i+2];</span><br><span class="line">				a[i+2] = temp;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	Insert_sort(a,num);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-归并排序"><a href="#5-归并排序" class="headerlink" title="5. 归并排序"></a>5. 归并排序</h4><div align="center">
+<img src=/img/10种算法GIF/5.归并排序.gif alt = "动图演示"/>
+</div>
+
+<p>归并排序算法原理如下：<br>（1）申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列<br>（2）设定两个指针，最初位置分别为两个已经排序序列的起始位置<br>（3）比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置<br>（4）重复步骤3直到某一指针超出序列尾<br>（5）将另一序列剩下的所有元素直接复制到合并序列尾</p>
+<p><strong>时间复杂度:O(nlogn)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">void Merge_sort(int *a,int start,int end)	//归并排序</span><br><span class="line">&#123;</span><br><span class="line">	int mid = (start+end)/2;</span><br><span class="line">	int len = end - start + 1;</span><br><span class="line">	int i = start;</span><br><span class="line">	int j = mid + 1;</span><br><span class="line">	int *p = (int *)malloc(sizeof(int)*(len));</span><br><span class="line">	int *temp = p;</span><br><span class="line">	while(i &lt;= mid &amp;&amp; j &lt;= end)&#123;</span><br><span class="line">		if(a[i] &lt; a[j])</span><br><span class="line">			*p++ = a[i++];</span><br><span class="line"></span><br><span class="line">		else</span><br><span class="line">			*p++ = a[j++];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if(i&gt;mid)&#123;</span><br><span class="line">		while(j &lt;= end)</span><br><span class="line">			*p++ = a[j++];</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	else if(j&gt;end)&#123;</span><br><span class="line">		while(i &lt;= mid)</span><br><span class="line">			*p++ = a[i++];</span><br><span class="line">	&#125;</span><br><span class="line">	p = temp;</span><br><span class="line">	for(i=0;i&lt;len;i++)&#123;</span><br><span class="line">		a[start++] = *temp++;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	free(p);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Devele_slock(int start,int end,int *a)	//分块（归并排序辅助递归函数）</span><br><span class="line">&#123;</span><br><span class="line">	if(start == end)</span><br><span class="line">		return;</span><br><span class="line">	int mid = (start+end)/2;</span><br><span class="line">	Devele_slock(start,mid,a);</span><br><span class="line">	Devele_slock(mid+1,end,a);</span><br><span class="line">	Merge_sort(a,start,end);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="6-快速排序"><a href="#6-快速排序" class="headerlink" title="6. 快速排序"></a>6. 快速排序</h4><div align="center">
+<img src=/img/10种算法GIF/6。快速排序.gif alt = "动图演示"/>
+</div>
+
+<p>快速排序算法原理如下：<br>（1）设置两个变量 end、start，排序开始时：start=0，end=num-1。<br>（2）整个数组找基准正确位置，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面<br>默认数组的第一个数为基准数据，赋值给key，即key=a[start]。<br>因为默认数组的第一个数为基准，所以从后面开始向前搜索（end–），找到第一个小于key的a[end]，就将 a[end] 赋给 a[start]，即 a[start] = a[end]。（循环条件是 a[end] &gt;= key；结束时 a[end] &lt; key）<br>此时从前面开始向后搜索（start++），找到第一个大于key的a[start]，就将 a[start] 赋给 a[end]，即 a[start] = a[end]。（循环条件是 a[start] &lt;= key；结束时 a[start] &gt; key）<br>循环 2-3 步骤，直到 end=start，该位置就是基准位置。<br>把基准数据赋给当前位置。<br>（3）第一趟找到的基准位置，作为下一趟的分界点。<br>（4）递归调用 mid 分界点前和分界点后的子数组排序，重复(2)(3)(4)的步骤。<br>（5）最终就会得到排序好的数组。</p>
+<p><strong>时间复杂度:O(nlogn)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">void Quick_sort(int *a,int start,int end)	//快速排序</span><br><span class="line">&#123;</span><br><span class="line">	if(start &lt; end)&#123;</span><br><span class="line">		int i = start;</span><br><span class="line">		int j = end;</span><br><span class="line">		int key = a[start];</span><br><span class="line">		while(i&lt;j)&#123;	</span><br><span class="line">			while(i &lt; j &amp;&amp; key &lt;= a[j])</span><br><span class="line">				j--;</span><br><span class="line">			if(i&lt;j)</span><br><span class="line">				a[i++] = a[j];</span><br><span class="line"></span><br><span class="line">			while(i &lt; j &amp;&amp; key &gt; a[i])</span><br><span class="line">				i++;</span><br><span class="line">			if(i&lt;j)</span><br><span class="line">				a[j--] = a[i];</span><br><span class="line">		&#125;</span><br><span class="line">		a[i] = key;</span><br><span class="line">		Quick_sort(a,start,i-1);</span><br><span class="line">		Quick_sort(a,i+1,end);</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-堆排序"><a href="#7-堆排序" class="headerlink" title="7. 堆排序"></a>7. 堆排序</h4><div align="center">
+<img src=/img/10种算法GIF/7.堆排序.gif alt = "动图演示"/>
+</div>
+
+<p>堆排序算法原理：<br>ki ≤ k2i 且 ki ≤ k2i+1（在 n 个记录的范围内，第 i 个关键字的值小于第 2<em>i 个关键字，同时也小于第 2</em>i+1 个关键字）<br>ki ≥ k2i 且 ki ≥ k2i+1（在 n 个记录的范围内，第 i 个关键字的值大于第 2<em>i 个关键字，同时也大于第 2</em>i+1 个关键字）<br>对于堆的定义也可以使用完全二叉树来解释，因为在完全二叉树中第 i 个结点的左孩子恰好是第 2i 个结点，右孩子恰好是 2i+1 个结点。如果该序列可以被称为堆，则使用该序列构建的完全二叉树中，每个根结点的值都必须不小于（或者不大于）左右孩子结点的值。</p>
+<p><strong>时间复杂度:O(nlogn)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#define MAX 9</span><br><span class="line">//单个记录的结构体</span><br><span class="line">typedef struct &#123;</span><br><span class="line">    int key;</span><br><span class="line">&#125;SqNote;</span><br><span class="line">//记录表的结构体</span><br><span class="line">typedef struct &#123;</span><br><span class="line">    SqNote r[MAX];</span><br><span class="line">    int length;</span><br><span class="line">&#125;SqList;</span><br><span class="line">//将以 r[s]为根结点的子树构成堆，堆中每个根结点的值都比其孩子结点的值大</span><br><span class="line">void HeapAdjust(SqList * H,int s,int m)&#123;</span><br><span class="line">    SqNote rc=H-&gt;r[s];//先对操作位置上的结点数据进行保存，放置后序移动元素丢失。</span><br><span class="line">    //对于第 s 个结点，筛选一直到叶子结点结束</span><br><span class="line">    for (int j=2*s; j&lt;=m; j*=2) &#123;</span><br><span class="line">        //找到值最大的孩子结点</span><br><span class="line">        if (j+1&lt;m &amp;&amp; (H-&gt;r[j].key&lt;H-&gt;r[j+1].key)) &#123;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line">        //如果当前结点比最大的孩子结点的值还大，则不需要对此结点进行筛选，直接略过</span><br><span class="line">        if (!(rc.key&lt;H-&gt;r[j].key)) &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        //如果当前结点的值比孩子结点中最大的值小，则将最大的值移至该结点，由于 rc 记录着该结点的值，所以该结点的值不会丢失</span><br><span class="line">        H-&gt;r[s]=H-&gt;r[j];</span><br><span class="line">        s=j;//s相当于指针的作用，指向其孩子结点，继续进行筛选</span><br><span class="line">    &#125;</span><br><span class="line">    H-&gt;r[s]=rc;//最终需将rc的值添加到正确的位置</span><br><span class="line">&#125;</span><br><span class="line">//交换两个记录的位置</span><br><span class="line">void swap(SqNote *a,SqNote *b)&#123;</span><br><span class="line">    int key=a-&gt;key;</span><br><span class="line">    a-&gt;key=b-&gt;key;</span><br><span class="line">    b-&gt;key=key;</span><br><span class="line">&#125;</span><br><span class="line">void HeapSort(SqList *H)&#123;</span><br><span class="line">    //构建堆的过程</span><br><span class="line">    for (int i=H-&gt;length/2; i&gt;0; i--) &#123;</span><br><span class="line">        //对于有孩子结点的根结点进行筛选</span><br><span class="line">        HeapAdjust(H, i, H-&gt;length);</span><br><span class="line">    &#125;</span><br><span class="line">    //通过不断地筛选出最大值，同时不断地进行筛选剩余元素</span><br><span class="line">    for (int i=H-&gt;length; i&gt;1; i--) &#123;</span><br><span class="line">        //交换过程，即为将选出的最大值进行保存大表的最后，同时用最后位置上的元素进行替换，为下一次筛选做准备</span><br><span class="line">        swap(&amp;(H-&gt;r[1]), &amp;(H-&gt;r[i]));</span><br><span class="line">        //进行筛选次最大值的工作</span><br><span class="line">        HeapAdjust(H, 1, i-1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    SqList * L=(SqList*)malloc(sizeof(SqList));</span><br><span class="line">    L-&gt;length=8;</span><br><span class="line">    L-&gt;r[1].key=49;</span><br><span class="line">    L-&gt;r[2].key=38;</span><br><span class="line">    L-&gt;r[3].key=65;</span><br><span class="line">    L-&gt;r[4].key=97;</span><br><span class="line">    L-&gt;r[5].key=76;</span><br><span class="line">    L-&gt;r[6].key=13;</span><br><span class="line">    L-&gt;r[7].key=27;</span><br><span class="line">    L-&gt;r[8].key=49;</span><br><span class="line">    HeapSort(L);</span><br><span class="line">    for (int i=1; i&lt;=L-&gt;length; i++) &#123;</span><br><span class="line">        printf(&quot;%d &quot;,L-&gt;r[i].key);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>堆排序算法C语言详解 <a target="_blank" rel="noopener" href="http://c.biancheng.net/view/3448.html">http://c.biancheng.net/view/3448.html</a></p>
+</blockquote>
+<h4 id="8-计数排序"><a href="#8-计数排序" class="headerlink" title="8. 计数排序"></a>8. 计数排序</h4><div align="center">
+<img src=/img/10种算法GIF/8.计数排序.gif alt = "动图演示"/>
+</div>
+
+<p>找出待排序的数组中最大和最小的元素;<br>统计数组中每个值为i的元素出现的次数，存入数组C的第i项;<br>对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）﹔<br>反向填充目标数组:将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1。</p>
+<p><strong>时间复杂度:O(n+k)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">function countingSort(arr, maxValue)</span><br><span class="line">&#123;</span><br><span class="line">    var bucket = new Array(maxValue + 1),sortedIndex = 0;</span><br><span class="line">    arrLen = arr.length;</span><br><span class="line">    bucketLen = maxValue + 1;for (var i = 0; i &lt; arrLen; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        if (!bucket[arr[i]])</span><br><span class="line">        &#123;</span><br><span class="line">            bucket[arr[i]]= 0;</span><br><span class="line">        &#125;</span><br><span class="line">    bucket[arr[i]]++;</span><br><span class="line">    &#125;</span><br><span class="line">    for (var j = 0; j &lt; bucketLen; j++)</span><br><span class="line">    &#123;</span><br><span class="line">        while(bucket[]&gt; 0) </span><br><span class="line">        &#123;</span><br><span class="line">            arr[sortedIndex++]= j;</span><br><span class="line">            bucket[]--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="9-桶排序"><a href="#9-桶排序" class="headerlink" title="9. 桶排序"></a>9. 桶排序</h4><div align="center">
+<img src=/img/10种算法GIF/9.桶排序.gif alt = "动图演示"/>
+</div>
+
+<p>桶排序是计数排序的扩展版本，计数排序可以看成每个桶只存储相同元素，而桶排序每个桶存储一定范围的元素，通过映射函数，将待排序数组中的元素映射到各个对应的桶中，对每个桶中的元素进行排序，最后将非空桶中的元素逐个放入原序列中。<br>桶排序需要尽量保证元素分散均匀，否则当所有数据集中在同一个桶中时，桶排序失效。</p>
+<p><strong>时间复杂度:O(n)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">typedef struct node&#123;</span><br><span class="line">    int key;</span><br><span class="line">    struct node *next;</span><br><span class="line">&#125;KeyNode;</span><br><span class="line"></span><br><span class="line">void bucket_sort(int keys[],int size,int bucket_size)&#123;</span><br><span class="line">    int i,j;</span><br><span class="line">    KeyNode **bucket_table=(KeyNode **)malloc(bucket_size*sizeof(KeyNode*));</span><br><span class="line">    for(i=O;i&lt;bucket_size;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        bucket_table[i]=(KeyNode*)malloc(sizeof(KeyNode));</span><br><span class="line">        bucket_table[i]-&gt;key=o;</span><br><span class="line">        bucket_table[i]-&gt;next=NULL;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for(j=O;j&lt;size;j++)</span><br><span class="line">    &#123;</span><br><span class="line">        KeyNode *node=(KeyNode *)malloc(sizeof(KeyNode));</span><br><span class="line">        node-&gt;key=keys[l;node-&gt;next=NULL;</span><br><span class="line">        int index=keys[]/10;</span><br><span class="line">        KeyNode *p=bucket_table[index];</span><br><span class="line">        if(p-&gt;key==O)</span><br><span class="line">        &#123;</span><br><span class="line">            bucket_table[index]-&gt;next=node;</span><br><span class="line">            (bucket_table[ index]-&gt;key)++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            while(p-&gt;next != NULL &amp;&amp; p-&gt;next-&gt;key &lt;= node-&gt;key)</span><br><span class="line">                p=p-&gt;next;</span><br><span class="line"></span><br><span class="line">            node-&gt;next=p-&gt;next;</span><br><span class="line">            p-&gt;next=node;</span><br><span class="line">            (bucket_table[index]-&gt;key)++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    KeyNode* k=NULL;</span><br><span class="line">    for(i=O;i&lt;bucket_size;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        for(k=bucket_table[i]-&gt;next;k!=NULL;k=k-&gt;next)</span><br><span class="line">            printf(&quot;%d &quot;,k-&gt;key);</span><br><span class="line">    &#125;</span><br><span class="line">    printf(&quot;n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main(</span><br><span class="line">&#123;</span><br><span class="line">    int raw[]=&#123;49,32,38,65,97,76,13,27&#125;;</span><br><span class="line">    int size=sizeof(raw)/sizeof(int);</span><br><span class="line">    bucket_sort(raw,size,10);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="10-基数排序"><a href="#10-基数排序" class="headerlink" title="10.  基数排序"></a>10.  基数排序</h4><div align="center">
+<img src=/img/10种算法GIF/10.基数排序.gif alt = "动图演示"/>
+</div>
+
+<p>基数排序不同于之前所介绍的各类排序，前边介绍到的排序方法或多或少的是通过使用比较和移动记录来实现排序，而基数排序的实现不需要进行对关键字的比较，只需要对关键字进行“分配”与“收集”两种操作即可完成。</p>
+<p><strong>时间复杂度:O(n)</strong></p>
+<p><em><strong>代码实现</strong></em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#define MAX_NUM_OF_KEY 8//构成关键字的组成部分的最大个数</span><br><span class="line">#define RADIX 10        //基数，例如关键字是数字，无疑由0~9组成，基数就是10；如果关键字是字符串（字母组成），基数就是 26</span><br><span class="line">#define MAX_SPACE 10000</span><br><span class="line">//静态链表的结点结构</span><br><span class="line">typedef struct&#123;</span><br><span class="line">    int data;//存储的关键字</span><br><span class="line">    int keys[MAX_NUM_OF_KEY];//存储关键字的数组（此时是一位一位的存储在数组中）</span><br><span class="line">    int next;//做指针用，用于是静态链表，所以每个结点中存储着下一个结点所在数组中的位置下标</span><br><span class="line">&#125;SLCell;</span><br><span class="line">//静态链表结构</span><br><span class="line">typedef struct&#123;</span><br><span class="line">    SLCell r[MAX_SPACE];//静态链表的可利用空间，其中r[0]为头结点</span><br><span class="line">    int keynum;//当前所有的关键字中最大的关键字所包含的位数，例如最大关键字是百，说明所有keynum=3</span><br><span class="line">    int recnum;//静态链表的当前长度</span><br><span class="line">&#125; SLList;</span><br><span class="line"></span><br><span class="line">typedef int  ArrType[RADIX];//指针数组，用于记录各子序列的首尾位置</span><br><span class="line">//排序的分配算法，i表示按照分配的位次（是个位，十位还是百位），f表示各子序列中第一个记录和最后一个记录的位置</span><br><span class="line">void Distribute(SLCell *r,int i,ArrType f,ArrType e)&#123;</span><br><span class="line">    //初始化指针数组</span><br><span class="line">    for (int j=0; j&lt;RADIX; j++) &#123;</span><br><span class="line">        f[j]=0;</span><br><span class="line">    &#125;</span><br><span class="line">    //遍历各个关键字</span><br><span class="line">    for (int p=r[0].next; p; p=r[p].next) &#123;</span><br><span class="line">        int j=r[p].keys[i];//取出每个关键字的第 i 位，由于采用的是最低位优先法，所以，例如，第 1 位指的就是每个关键字的个位</span><br><span class="line">        if (!f[j]) &#123;//如果只想该位数字的指针不存在，说明这是第一个关键字，直接记录该关键字的位置即可</span><br><span class="line">            f[j]=p;</span><br><span class="line">        &#125;else&#123;//如果存在，说明之前已经有同该关键字相同位的记录，所以需要将其进行连接，将最后一个相同的关键字的next指针指向该关键字所在的位置，同时最后移动尾指针的位置。</span><br><span class="line">            r[e[j]].next=p;</span><br><span class="line">        &#125;</span><br><span class="line">        e[j]=p;//移动尾指针的位置</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//基数排序的收集算法，即重新设置链表中各结点的尾指针</span><br><span class="line">void Collect(SLCell *r,int i,ArrType f,ArrType e)&#123;</span><br><span class="line">    int j;</span><br><span class="line">    //从 0 开始遍历，查找头指针不为空的情况，为空表明该位没有该类型的关键字</span><br><span class="line">    for (j=0;!f[j]; j++);</span><br><span class="line">    r[0].next=f[j];//重新设置头结点</span><br><span class="line">    int t=e[j];//找到尾指针的位置</span><br><span class="line">    while (j&lt;RADIX) &#123;</span><br><span class="line">        for (j++; j&lt;RADIX; j++) &#123;</span><br><span class="line">            if (f[j]) &#123;</span><br><span class="line">                r[t].next=f[j];//重新连接下一个位次的首个关键字</span><br><span class="line">                t=e[j];//t代表下一个位次的尾指针所在的位置</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    r[t].next=0;//0表示链表结束</span><br><span class="line">&#125;</span><br><span class="line">void RadixSort(SLList *L)&#123;</span><br><span class="line">    ArrType f,e;</span><br><span class="line">    //根据记录中所包含的关键字的最大位数，一位一位的进行分配与收集</span><br><span class="line">    for (int i=0; i&lt;L-&gt;keynum; i++) &#123;</span><br><span class="line">        //秉着先分配后收集的顺序</span><br><span class="line">        Distribute(L-&gt;r, i, f, e);</span><br><span class="line">        Collect(L-&gt;r, i, f, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//创建静态链表</span><br><span class="line">void creatList(SLList * L)&#123;</span><br><span class="line">    int key,i=1,j;</span><br><span class="line">    scanf(&quot;%d&quot;,&amp;key);</span><br><span class="line">    while (key!=-1) &#123;</span><br><span class="line">        L-&gt;r[i].data=key;</span><br><span class="line">        for (j=0; j&lt;=L-&gt;keynum; j++) &#123;</span><br><span class="line">            L-&gt;r[i].keys[j]=key%10;</span><br><span class="line">            key/=10;</span><br><span class="line">        &#125;</span><br><span class="line">        L-&gt;r[i-1].next=i;</span><br><span class="line">        i++;</span><br><span class="line">        scanf(&quot;%d&quot;,&amp;key);</span><br><span class="line">    &#125;</span><br><span class="line">    L-&gt;recnum=i-1;</span><br><span class="line">    L-&gt;r[L-&gt;recnum].next=0;</span><br><span class="line">&#125;</span><br><span class="line">//输出静态链表</span><br><span class="line">void print(SLList*L)&#123;</span><br><span class="line">    for (int p=L-&gt;r[0].next; p; p=L-&gt;r[p].next) &#123;</span><br><span class="line">        printf(&quot;%d &quot;,L-&gt;r[p].data);</span><br><span class="line">    &#125;</span><br><span class="line">    printf(&quot;\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, const char * argv[]) &#123;</span><br><span class="line">    SLList *L=(SLList*)malloc(sizeof(SLList));</span><br><span class="line">    L-&gt;keynum=3;</span><br><span class="line">    L-&gt;recnum=0;</span><br><span class="line">    creatList(L);//创建静态链表</span><br><span class="line">    printf(&quot;排序前：&quot;);</span><br><span class="line">    print(L);</span><br><span class="line">   </span><br><span class="line">    RadixSort(L);//对静态链表中的记录进行基数排序</span><br><span class="line">   </span><br><span class="line">    printf(&quot;排序后：&quot;);</span><br><span class="line">    print(L);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>基数排序及其C语言实现 <a target="_blank" rel="noopener" href="http://data.biancheng.net/view/74.html">http://data.biancheng.net/view/74.html</a></p>
+</blockquote>
+<p>打印函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void Print_all(int *a,int num)	//打印出序列</span><br><span class="line">&#123;</span><br><span class="line">	int i;</span><br><span class="line">	for(i=0;i&lt;num;i++)</span><br><span class="line">		printf(&quot;%d\t&quot;,a[i]);</span><br><span class="line"></span><br><span class="line">	printf(&quot;\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">排序方法</th>
+<th align="center">平均时间</th>
+<th align="center">最好时间</th>
+<th align="center">最坏时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">桶排序(不稳定)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n)</td>
+</tr>
+<tr>
+<td align="center">基数排序(稳定)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n)</td>
+</tr>
+<tr>
+<td align="center">归并排序(稳定)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(nlogn)</td>
+</tr>
+<tr>
+<td align="center">快速排序(不稳定)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(n^2)</td>
+</tr>
+<tr>
+<td align="center">堆排序(不稳定)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(nlogn)</td>
+<td align="center">O(nlogn)</td>
+</tr>
+<tr>
+<td align="center">希尔排序(不稳定)</td>
+<td align="center">O(n^1.25)</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">冒泡排序(稳定)</td>
+<td align="center">O(n^2)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n^2)</td>
+</tr>
+<tr>
+<td align="center">选择排序(不稳定)</td>
+<td align="center">O(n^2)</td>
+<td align="center">O(n^2)</td>
+<td align="center">O(n^2)</td>
+</tr>
+<tr>
+<td align="center">直接插入排序(稳定)</td>
+<td align="center">O(n^2)</td>
+<td align="center">O(n)</td>
+<td align="center">O(n^2)</td>
+</tr>
+</tbody></table>
+<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.csdn.net/">https://www.csdn.net/</a></p>
+</blockquote>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2020/05/24/%E6%8E%92%E5%BA%8F/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hadoop的基础部署" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -677,15 +1043,15 @@
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">C语言</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
             
             <div class="clearfix"></div>
