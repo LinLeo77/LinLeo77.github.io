@@ -224,6 +224,306 @@
             
 
   
+    <article id="post-TTGO T-Watch开发过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/07/25/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B/" target="_blank">TTGO T-Watch开发过程</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/07/25/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B/" class="archive-article-date">
+        <time datetime="2021-07-25T05:34:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-25</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="TTGO-T-Watch开发过程（LVGL）"><a href="#TTGO-T-Watch开发过程（LVGL）" class="headerlink" title="TTGO T-Watch开发过程（LVGL）"></a>TTGO T-Watch开发过程（LVGL）</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>LVGL控件学习推荐：<a target="_blank" rel="noopener" href="http://lvgl.100ask.org/7.11/documentation/01_intro/intro.html">百问网</a>    （T-Watch上的lvgl版本与此相同，建议参考）</p>
+<p>打开VScode，进入新建的工程，确保已经安装了TTGO的库。</p>
+<p><img src="/img/LVGL/image-20210810160256210.png" alt="image-20210810160256210"></p>
+<p>设置上传波特率后回车</p>
+<p><img src="/img/LVGL/image-20210810161540926.png" alt="image-20210810161540926"></p>
+<p>在路径<strong>src</strong>下，编写自己的代码。</p>
+<h3 id="关键定义与声明"><a href="#关键定义与声明" class="headerlink" title="关键定义与声明"></a>关键定义与声明</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/*添加LILYGO_WATCH_2020_V3的所必须的定义与声明*/</span><br><span class="line">#define LILYGO_WATCH_2020_V3			//选择手表的版本</span><br><span class="line">#define LILYGO_WATCH_LVGL				//定义LVGL</span><br><span class="line">#include &lt;LilyGoWatch.h&gt;				</span><br><span class="line"></span><br><span class="line">#include &lt;Arduino.h&gt;</span><br><span class="line">#include &lt;lvgl/lvgl.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在main函数的void setup() 下，初始化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// put your setup code here, to run once:</span><br><span class="line">Serial.begin(115200);</span><br><span class="line">ttgo = TTGOClass::getWatch();</span><br><span class="line">ttgo-&gt;begin();</span><br><span class="line">ttgo-&gt;openBL();</span><br><span class="line">ttgo-&gt;lvgl_begin();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="关键函数解释"><a href="#关键函数解释" class="headerlink" title="关键函数解释"></a>关键函数解释</h3><p><em><strong>各个控件样式示例：</strong></em><a target="_blank" rel="noopener" href="https://www.cnblogs.com/whsj215294062/p/13932104.html">lvgl6.1.2控件介绍</a></p>
+<h4 id="1、添加外部图片及其转换C数组"><a href="#1、添加外部图片及其转换C数组" class="headerlink" title="1、添加外部图片及其转换C数组"></a>1、添加外部图片及其转换C数组</h4><p><em>因为2020 v3版本的watch不支持TF卡，如需添加自己的图片到UI中，必须将图片转换成C array</em></p>
+<p>LVGL官方图片转C数组：<a target="_blank" rel="noopener" href="https://lvgl.io/tools/imageconverter">链接</a></p>
+<p><img src="/img/LVGL/image-20210810163623136.png" alt="image-20210810163623136"></p>
+<p>在转换后下载的.c文件中，将其拷贝到工程的<strong>arc</strong>路径下（与main同），找到文件末尾</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const lv_img_dsc_t background_new = &#123;			/*background_new即为可调用的图片名*/</span><br><span class="line">  .header.always_zero = 0,</span><br><span class="line">  .header.w = 240,				/*图片的大小*/</span><br><span class="line">  .header.h = 240,</span><br><span class="line">  .data_size = 57600 * LV_IMG_PX_SIZE_ALPHA_BYTE,</span><br><span class="line">  .header.cf = LV_IMG_CF_TRUE_COLOR_ALPHA,</span><br><span class="line">  .data = background_new_map,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在要使用图片的地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LV_IMG_DECLARE(background_new);			/*声明图片*/</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、创建页面对象控件"><a href="#2、创建页面对象控件" class="headerlink" title="2、创建页面对象控件"></a>2、创建页面对象控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">v_obj_t * main_widget = lv_obj_create(NULL, NULL);		//创建一个页面对象，返回一个对象指针</span><br><span class="line">注：</span><br><span class="line">第一个参数是依赖的父对象，即要创建的控件是贴附在哪个控件之上，在后面的各种控件创建时，这里的参数都尤为关键，决定着控件的展示逻辑依赖关系；参数可填lv_scr_act()：即显示在当前屏幕，NULL：不依赖任何控件对象</span><br><span class="line">第二个参数是要拷贝的对象，即是否需要拷贝一个对象作为基础，不需要则填NULL。</span><br><span class="line"></span><br><span class="line">lv_obj_set_size(main_widget, 240, 240);			//设置控件的大小</span><br><span class="line">lv_obj_t *img1 = lv_img_create(main_widget, NULL);		//创建一个图片对象，并依赖于前面的页面对象（以后加载前面的页面时，其子控件也会一起加载展示）</span><br><span class="line">lv_img_set_src(img1, &amp;background_new);		//将创建的图片对象与前面转换的.c文件中的图片名相绑定</span><br><span class="line">lv_obj_align(img1, main_widget, LV_ALIGN_CENTER, 0, 0);		//设置对象的位置</span><br><span class="line">lv_obj_set_size(img1, 240, 240);		//设置对象的大小</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、创建格式"><a href="#3、创建格式" class="headerlink" title="3、创建格式"></a>3、创建格式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/*设置图片按钮样式*/</span><br><span class="line">lv_style_init(&amp;img_style);</span><br><span class="line">lv_style_set_image_recolor_opa(&amp;img_style, LV_STATE_PRESSED, LV_OPA_30);</span><br><span class="line">lv_style_set_image_recolor(&amp;img_style, LV_STATE_PRESSED, LV_COLOR_BLACK);</span><br><span class="line">lv_style_set_text_color(&amp;img_style, LV_STATE_DEFAULT, LV_COLOR_WHITE);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>非必须，在使用各种控件时，除了默认的控件样式之外，还可以自定义其样式，定义一个样式对象，初始化与设定其特性后，再将其绑定到新建的控件之下。</p>
+</blockquote>
+<h4 id="4、创建图片按钮控件"><a href="#4、创建图片按钮控件" class="headerlink" title="4、创建图片按钮控件"></a>4、创建图片按钮控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/*Create an Image button*/</span><br><span class="line">imgbtn1 = lv_imgbtn_create(main_widget, NULL);		//注：此示例控件已经声明为全局变量</span><br><span class="line">lv_imgbtn_set_src(imgbtn1, LV_BTN_STATE_RELEASED, &amp;conctrler);		/*设置按钮的图片*/</span><br><span class="line">lv_imgbtn_set_src(imgbtn1, LV_BTN_STATE_PRESSED, &amp;conctrler);</span><br><span class="line">lv_imgbtn_set_checkable(imgbtn1, true);			//设置为可点击</span><br><span class="line">lv_obj_add_style(imgbtn1, LV_IMGBTN_PART_MAIN, &amp;img_style);			//绑定样式</span><br><span class="line">lv_obj_align(imgbtn1, main_widget, LV_ALIGN_CENTER, -53, -53);</span><br><span class="line">lv_obj_set_event_cb(imgbtn1, conctrler_event_handler);		//添加点击事件（点击图片后，要执行的函数）</span><br></pre></td></tr></table></figure>
+
+<h4 id="5、创建开关控件"><a href="#5、创建开关控件" class="headerlink" title="5、创建开关控件"></a>5、创建开关控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sw1 = lv_switch_create(conctrl_widget, NULL);			//注：此示例控件已经声明为全局变量</span><br><span class="line">lv_obj_set_event_cb(sw1, switch_light_event_handler);		//绑定开关事件</span><br><span class="line">lv_obj_align(sw1, conctrl_widget, LV_ALIGN_CENTER, 40, -55);</span><br></pre></td></tr></table></figure>
+
+<h4 id="6、创建平铺视图控件"><a href="#6、创建平铺视图控件" class="headerlink" title="6、创建平铺视图控件"></a>6、创建平铺视图控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">static lv_point_t valid_pos[] = &#123;&#123;0, 0&#125;, &#123;0, 1&#125;, &#123;1, 0&#125;, &#123;1, 1&#125;&#125;;</span><br><span class="line"></span><br><span class="line">tileview = lv_tileview_create(NULL, NULL);</span><br><span class="line">lv_tileview_set_valid_positions(tileview, valid_pos, 4);	//关联数组机可移动的方块数</span><br><span class="line">lv_tileview_set_edge_flash(tileview, true);		//打开边缘提示</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>控件解释：该控件需先定义一个二维数组，可以将控件的和二维数组相联系，定义了坐标点，就代表平铺视图可以移动的方向；如定义了<strong>（0，0），（0，1），（1，1）</strong>，就代表着这三个坐标的地方是可以移动的(‘L’ 形)，而（1，0）未定义，则不可移动。</p>
+</blockquote>
+<h4 id="7、创建表盘控件"><a href="#7、创建表盘控件" class="headerlink" title="7、创建表盘控件"></a>7、创建表盘控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lv_obj_t *temp_meter = lv_linemeter_create(tile1, NULL);</span><br><span class="line">lv_linemeter_set_range(temp_meter, -60, 60);		//设定表盘起始角度</span><br><span class="line">lv_linemeter_set_value(temp_meter, temperature); 		//设置当前值</span><br><span class="line">lv_linemeter_set_scale(temp_meter, 240, 100);    //设置表盘的总角度与格数</span><br><span class="line">lv_obj_set_size(temp_meter, 150, 150);</span><br><span class="line">lv_obj_align(temp_meter, tile1, LV_ALIGN_CENTER, 0, 0);</span><br></pre></td></tr></table></figure>
+
+<h4 id="8、添加动画"><a href="#8、添加动画" class="headerlink" title="8、添加动画"></a>8、添加动画</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">lv_anim_t tem_a;</span><br><span class="line">lv_anim_init(&amp;tem_a);		//初始化</span><br><span class="line">lv_anim_set_var(&amp;tem_a, temp_meter);</span><br><span class="line">lv_anim_set_exec_cb(&amp;tem_a, tem_set_angle);		//绑定执行函数</span><br><span class="line">lv_anim_set_time(&amp;tem_a, 1000);		//动画一次持续时间</span><br><span class="line">lv_anim_set_repeat_count(&amp;tem_a, 10000); 		//动画循环次数</span><br><span class="line">lv_anim_set_repeat_delay(&amp;tem_a, 1000);		//每次动画间隔时间</span><br><span class="line">lv_anim_set_values(&amp;tem_a, -60, temperature);</span><br><span class="line">lv_anim_start(&amp;tem_a);		//开始动画</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：很多控件都可以添加动画效果，依据个人喜好</p>
+</blockquote>
+<h4 id="9、创建弧控件"><a href="#9、创建弧控件" class="headerlink" title="9、创建弧控件"></a>9、创建弧控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lv_obj_t *arc = lv_arc_create(img_indetect2, NULL);</span><br><span class="line">lv_arc_set_end_angle(arc, 240);		//设置弧角度</span><br><span class="line">lv_arc_set_range(arc, 0, 100);		//弧的起始范围</span><br><span class="line">lv_arc_set_value(arc, 70);</span><br><span class="line">lv_obj_set_size(arc, 150, 150);</span><br><span class="line">lv_obj_align(arc, NULL, LV_ALIGN_CENTER, 0, 0);</span><br></pre></td></tr></table></figure>
+
+<h4 id="10、创建仪表盘控件"><a href="#10、创建仪表盘控件" class="headerlink" title="10、创建仪表盘控件"></a>10、创建仪表盘控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static lv_color_t needle_colors[2];		//定义指向针颜色数组</span><br><span class="line">needle_colors[0] = LV_COLOR_BLUE;</span><br><span class="line">needle_colors[1] = LV_COLOR_RED;</span><br><span class="line"></span><br><span class="line">lv_obj_t *gauge1 = lv_gauge_create(tile3, NULL);</span><br><span class="line">lv_gauge_set_needle_count(gauge1, 2, needle_colors); 	//绑定颜色</span><br><span class="line">lv_obj_set_size(gauge1, 180, 180);</span><br><span class="line">lv_gauge_set_critical_value(gauge1, 75);		//设置警戒值</span><br><span class="line">lv_obj_align(gauge1, NULL, LV_ALIGN_CENTER, 0, 0);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>控件解释：该控件类似于汽车速度仪表盘，有警戒范围（即到达某一值后，高亮），needel为仪表盘的指针，可以创建多个</p>
+</blockquote>
+<h4 id="11、创建图标控件"><a href="#11、创建图标控件" class="headerlink" title="11、创建图标控件"></a>11、创建图标控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lv_obj_t *bright_chart = lv_chart_create(img_indetect4, NULL);</span><br><span class="line">lv_chart_set_range(bright_chart, 0, 1000);		//Y轴起始范围</span><br><span class="line">lv_chart_set_point_count(bright_chart, 24);		//设置数据点</span><br><span class="line">lv_obj_set_size(bright_chart, 200, 150);</span><br><span class="line">lv_obj_align(bright_chart, NULL, LV_ALIGN_CENTER, 0, -30);</span><br><span class="line">lv_chart_set_type(bright_chart, LV_CHART_TYPE_LINE);		//设置图表的风格</span><br></pre></td></tr></table></figure>
+
+<h4 id="12、创建文本控件"><a href="#12、创建文本控件" class="headerlink" title="12、创建文本控件"></a>12、创建文本控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lv_obj_t *bri_label1 = lv_label_create(img_indetect4, NULL);</span><br><span class="line">lv_label_set_recolor(bri_label1, true);		//设置文本颜色可自定义</span><br><span class="line">lv_obj_align(bri_label1, bright_chart, LV_ALIGN_CENTER, -95, -83);	</span><br><span class="line">lv_label_set_long_mode(bri_scroll_lab, LV_LABEL_LONG_SROLL_CIRC);	//设置文本模式，这里是可滚动</span><br><span class="line">lv_obj_set_width(bri_scroll_lab, 90);		//滚动的宽度</span><br><span class="line">lv_label_set_text(bri_scroll_lab, &quot;#0000ff  文本内容#&quot;);	//设置文本内容</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>控件解释：在设置颜色可自定义后，”#0000ff  文本内容#”表明，设置‘文本内容’的颜色为0000ff，即为蓝色，可修改数值自定义颜色。（注意‘#’的位置：第一个后面是颜色数值；后面一个的前面是文本内容）</p>
+</blockquote>
+<h4 id="13、创建LED控件"><a href="#13、创建LED控件" class="headerlink" title="13、创建LED控件"></a>13、创建LED控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">static lv_style_t led1_style;	//设置LED样式</span><br><span class="line">lv_style_init(&amp;led1_style);		//初始化</span><br><span class="line">lv_style_set_bg_color(&amp;led1_style, LV_STATE_DEFAULT, LV_COLOR_BLUE);		//LED颜色</span><br><span class="line">lv_obj_t *led1 = lv_led_create(tile3, NULL);		</span><br><span class="line">lv_obj_add_style(led1, LV_LED_PART_MAIN, &amp;led1_style);		//绑定样式</span><br><span class="line">lv_led_set_bright(led1, 150);		//设置LED亮度</span><br><span class="line">lv_obj_align(led1, tile3, LV_ALIGN_CENTER, -85, 100);</span><br><span class="line">lv_obj_set_size(led1, 25, 25);</span><br></pre></td></tr></table></figure>
+
+<h4 id="14、创建日历控件"><a href="#14、创建日历控件" class="headerlink" title="14、创建日历控件"></a>14、创建日历控件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lv_obj_t *calendar = lv_calendar_create(calendar_widget, NULL);</span><br><span class="line">lv_obj_set_size(calendar, 235, 235);		</span><br><span class="line">lv_obj_align(calendar, NULL, LV_ALIGN_CENTER, 0, 0);</span><br><span class="line">lv_obj_set_event_cb(calendar, date_event_handler);</span><br></pre></td></tr></table></figure>
+
+<p><strong>以上即为本UI所用到的控件，还需要自定义添加控件的可到官网或者LVGL模拟器中了解</strong></p>
+<p><a target="_blank" rel="noopener" href="https://lvgl.io/">LVGL官网</a></p>
+<h3 id="UI源码示例"><a href="#UI源码示例" class="headerlink" title="UI源码示例"></a>UI源码示例</h3><p>基于TTGO T-Watch 2020 V3的简单物联网控制UI    </p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/lin-yaozong/t-watch_-simple_-ui/tree/master/">源码示例</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://gitee.com/lin-yaozong/t-watch_-simple_-ui.git</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">嵌入式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/嵌入式//" class="article-tag-list-link color4">嵌入式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/07/25/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-TTGO T-Watch开发环境搭建" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2021/07/24/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" target="_blank">TTGO T-Watch开发环境搭建</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2021/07/24/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="archive-article-date">
+        <time datetime="2021-07-24T03:24:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-24</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="TTGO-T-Watch（UI）开发环境搭建"><a href="#TTGO-T-Watch（UI）开发环境搭建" class="headerlink" title="TTGO T-Watch（UI）开发环境搭建"></a>TTGO T-Watch（UI）开发环境搭建</h2><h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>LVGL(轻度综合图形界面库)：作为一个免费开源图形库能够提供几乎所有的嵌入式GUI。该开源库有使用方便,画面美观,内存占用率低等优点。</p>
+<h4 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h4><p>Python环境安装：<a target="_blank" rel="noopener" href="https://www.python.org/getit/">官方下载</a></p>
+<p>选择安装3.6以上的版本，记得在安装的时候<strong>勾选</strong>加入环境变量 <em><strong>ADD PATH</strong></em>，完成安装后关闭。</p>
+<p>VScode下载：<a target="_blank" rel="noopener" href="https://code.visualstudio.com/Download">官方下载</a></p>
+<p>选择安装最新版本，完成后，打开VScode。</p>
+<h4 id="PlatformIO-IDE安装"><a href="#PlatformIO-IDE安装" class="headerlink" title="PlatformIO IDE安装"></a>PlatformIO IDE安装</h4><p>搜索PlatformIO插件并安装：</p>
+<p><img src="/img/LVGL/image-20210809220351713.png" alt="image-20210809220351713"></p>
+<p>按照步骤：1、点击拓展    2、输入platform    3、点击安装PlatformIO IDE    （进度条在右下方）</p>
+<p>（安装时会自动检测电脑是否安装了python环境，时间较长。注意：可能会出现安装某些插件的时候失败，可以重启VScode或者将PlatformIO删除再下载一遍）</p>
+<p>完成后如下图：</p>
+<p><img src="/img/LVGL/image-20210809221519120.png" alt="image-20210809221519120"></p>
+<h4 id="PlatformIO的使用"><a href="#PlatformIO的使用" class="headerlink" title="PlatformIO的使用"></a>PlatformIO的使用</h4><h5 id="新建工程"><a href="#新建工程" class="headerlink" title="新建工程"></a>新建工程</h5><p><img src="/img/LVGL/image-20210809222440712.png" alt="image-20210809222440712"></p>
+<p>（注意：新建工程需要一些时间，期间在安装esp32的库文件）</p>
+<h5 id="添加TTGO-T-Watch库"><a href="#添加TTGO-T-Watch库" class="headerlink" title="添加TTGO T-Watch库"></a>添加TTGO T-Watch库</h5><p><img src="/img/LVGL/image-20210809223107828.png" alt="image-20210809223107828"></p>
+<p>下载时，选择添加到新建的工程下。</p>
+<p><img src="/img/LVGL/image-20210809223152152.png" alt="image-20210809223152152"></p>
+<p>（注意：这个也是需要时间，完成后，重启VScode，既可以发现库已经安装完毕！ ）</p>
+<h3 id="安装LVGL模拟器"><a href="#安装LVGL模拟器" class="headerlink" title="安装LVGL模拟器"></a>安装LVGL模拟器</h3><p>注：安装LVGL模拟器非必须，<strong>做参考使用，可快速理解每个控件的实际样式</strong>，且lvgl版本和先前VScode中安装的TTGO T-Watch库自带的lvgl版本不一样，添加相同的控件时，使用的函数不一样！</p>
+<h4 id="软件下载-1"><a href="#软件下载-1" class="headerlink" title="软件下载"></a>软件下载</h4><p>Visual Studio 2019下载：<a target="_blank" rel="noopener" href="https://visualstudio.microsoft.com/zh-hans/vs/">官方下载</a>    选择安装免费社区版。</p>
+<p>方式1：git</p>
+<p>安装完成后，在某一目录下，终端执行一下命令，该命令会将该目录下及其子目录的内容下载下来（前提是安装了git）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --recurse-submodules https://github.com/lvgl/lv_sim_visual_studio.git</span><br></pre></td></tr></table></figure>
+
+<p>方式2：下载压缩包</p>
+<p><img src="/img/LVGL/image-20210809225046279.png" alt="image-20210809225046279"></p>
+<p>下载完成后，打开如下：</p>
+<p><img src="/img/LVGL/image-20210809224829040.png" alt="image-20210809224829040"></p>
+<p>进入后，先进行编译：</p>
+<p><img src="/img/LVGL/image-20210809225351882.png" alt="image-20210809225351882"></p>
+<p>编译成功后，会出现</p>
+<p><img src="/img/LVGL/image-20210809225725810.png" alt="image-20210809225725810"></p>
+<p>这是默认的示例LVGL页面，后面可自己修改。</p>
+<p><img src="/img/LVGL/image-20210809225850077.png" alt="image-20210809225850077"></p>
+<p>在LVGL.Simulator目录下，在末尾找到LVGL.Simulator.cpp这是修改运行实例函数处（需要看何种控件的效果，只要把它取消注释即可）</p>
+<p>后期可以在某一文件夹下（建议下示例文件夹中），添加自己的工程文件，编写自己的LVGL代码。</p>
+<p>注意：添加头文件正确的路径，以及在在正确的h文件下声明自己编写的函数（可以ctrl+单机示例代码函数的方式找到存放声明函数的文件）</p>
+<p>LVGL控件学习推荐：<a target="_blank" rel="noopener" href="http://lvgl.100ask.org/7.11/documentation/01_intro/intro.html">百问网</a>    （T-Watch上的lvgl版本与此相同，建议参考）</p>
+<hr>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">嵌入式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+    
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/嵌入式//" class="article-tag-list-link color4">嵌入式</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2021/07/24/TTGO%20T-Watch%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-对epoll实现三部曲的原理理解（图解）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1606,246 +1906,6 @@
 
 
   
-    <article id="post-线程池技术实现多线程copy功能" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/" target="_blank">线程池技术实现多线程copy功能</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/" class="archive-article-date">
-        <time datetime="2020-06-23T12:48:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h5><p>在使用shell终端复制某文件到别处时，若文件包含多级子目录，且文件总大小过大时，使用原有的cp命令速度较慢；<br>在一个bash上执行cp命令，打开另一个终端，查看当前进程的线程时，发现cp命令运用到的仅仅是单线程来进行copy操作；<br>显然，在遇到过大的文件时（包含多级目录），单线程复制则显得很慢；<br>因此引入线程池技术，加快复制操作。</p>
-<h5 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h5><p>基本思想就是在程序开始时就在内存中开辟一些线程，线程的数目是固定的,他们独自形成一个类，屏蔽了对外的操作，而服务器只需要将数据包交给线程池就可以了。当有新的客户请求到达时，不是新创建一个线程为其服务，而是从“池子”中选择一个空闲的线程为新的客户请求服务,服务完毕后，线程进入空闲线程池中。如果没有线程空闲的话，就将数据包暂时积累，等待线程池内有线程空闲以后再进行处理。通过对多个任务重用已经存在的线程对象，降低了对线程对象创建和销毁的开销。当客户请求时，线程对象已经存在，可以提高请求的响应时间，从而整体地提高了系统服务的表现。</p>
-<h5 id="组成部分"><a href="#组成部分" class="headerlink" title="组成部分"></a>组成部分</h5><p>1）线程管理器:用于创建并管理线程池。<br>2) 工作线程：线程池中实际执行任务的线程。在初始化线程时会预先创建好固定数目的线程在池中，这些初始化的线程一般处于空闲状态，一般不占用CPu，占用较小的内存空间。<br>3）任务接口：每个任务必须实现的接口，当线程池的任务队列中有可执行任务时，被空闲的工作线程调去执行（线程的闲与忙是通过互斥量实现的，跟前面文章中的设置标志位差不多)，把任务抽象出来形成接口，可以做到线程池与具体的任务无关。<br>4) 任务队列：用来存放没有处理的任务，提供一种缓冲机制，实现这种结构有好几种方法，常用的是队列，主要运用先进先出原理，另外一种是链表之类的数据结构，可以动态的为它分配内存空间，应用中比较灵活，下文中就是用到的链表。</p>
-<h5 id="多线程实现cp代码"><a href="#多线程实现cp代码" class="headerlink" title="多线程实现cp代码"></a>多线程实现cp代码</h5><p><em>thdpool.h文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;pthread.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;dirent.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct task</span><br><span class="line">&#123;</span><br><span class="line">    void* (*callback_function)(void *arg);    //线程回调函数</span><br><span class="line">    void *arg;                                //回调函数参数</span><br><span class="line">    struct task *next;                   //指向下一个任务的指针</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">typedef  struct  ThreadPool</span><br><span class="line">&#123;</span><br><span class="line">	pthread_mutex_t lock;    //互斥锁</span><br><span class="line">	pthread_cond_t cond;     //条件变量</span><br><span class="line">	pthread_t *tids;         //存储创建的所有线程的id号</span><br><span class="line">	int thread_num;          //线程池中线程的总数</span><br><span class="line">	struct task *head;       //任务队列的头指针</span><br><span class="line">	struct task *tail;       //任务队列的尾指针</span><br><span class="line">	int active_threads;      //正在工作的线程个数</span><br><span class="line">	int queue_num;           //正在等待的任务数</span><br><span class="line">	int pool_close;          //线程池是否已经关闭</span><br><span class="line">&#125;thdpool;</span><br><span class="line"></span><br><span class="line">thdpool *threadpool_init(int thd_total_num);</span><br><span class="line">int threadpool_destroy(thdpool *pool);</span><br><span class="line">void *thread_func(void *arg);</span><br><span class="line">int pool_add_task(thdpool *pool, void *(*task)(void *arg), void *arg);</span><br><span class="line">thdpool *initpool(int threadnum);</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-
-<p><em>retridircp.h文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#ifndef __RETRIDIRCP_H</span><br><span class="line">#define __RETRIDIRCP_H</span><br><span class="line"></span><br><span class="line">#define MAX_PATH 256</span><br><span class="line">#define MAX_SIZE 1024</span><br><span class="line">#define MAX_FILE 100</span><br><span class="line"></span><br><span class="line">struct Path&#123;</span><br><span class="line">    char source_path[MAX_PATH];</span><br><span class="line">    char target_path[MAX_PATH];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">void *file_paste(void *arg);</span><br><span class="line">void *retridirt(void *arg);</span><br><span class="line">void *copy_file(void *arg);</span><br><span class="line">void *create_dir(void *arg);</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-
-<p>在存在多级目录的情况下，对目录进行遍历操作自然必不可少，可参照我前文关于<a target="_blank" rel="noopener" href="https://linleo77.github.io/2020/05/11/linux%E4%B8%8BU%E7%9B%98%E7%83%AD%E6%8B%94%E6%8F%92%E8%AE%A1%E6%96%87%E4%BB%B6copy/">linux下U盘热拔插计文件copy</a></p>
-<p><em>retridircp.c文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;thdpool.h&quot;</span><br><span class="line">#include &quot;retridircp.h&quot;</span><br><span class="line"></span><br><span class="line">thdpool *pool = NULL;</span><br><span class="line"></span><br><span class="line">void *copy_file(void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	struct Path *path = (struct Path *)arg;</span><br><span class="line">	if(path == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;pathname is NULL\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">		</span><br><span class="line">	char buf[MAX_SIZE];</span><br><span class="line">	memset(buf, 0, MAX_SIZE);</span><br><span class="line"></span><br><span class="line">	char targfile[MAX_PATH] = &#123;0&#125;;</span><br><span class="line">	memset(targfile, 0, MAX_PATH);</span><br><span class="line">	</span><br><span class="line">	struct stat fstat;</span><br><span class="line">	stat(path-&gt;source_path, &amp;fstat);     //获取文件属性</span><br><span class="line"></span><br><span class="line">	int sfd, tfd;</span><br><span class="line">	int readnum;</span><br><span class="line"></span><br><span class="line">	sprintf(targfile, &quot;%s/%s&quot;, path-&gt;target_path, path-&gt;source_path);</span><br><span class="line"></span><br><span class="line">	/*打开源文件，创建目标文件*/</span><br><span class="line">	sfd = open(path-&gt;source_path, O_RDONLY);           </span><br><span class="line">	tfd = open(targfile, O_WRONLY | O_CREAT, fstat.st_mode);</span><br><span class="line">	if(sfd &lt; 0  ||  tfd &lt; 0)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;cannot open file %s **** %s\n&quot;, path-&gt;source_path, targfile);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/*将源文件内容读出并写到目标文件*/</span><br><span class="line">	while((readnum = read(sfd, buf, MAX_SIZE)) &gt; 0)</span><br><span class="line">	&#123;</span><br><span class="line">		if(write(tfd, buf, readnum) != readnum)</span><br><span class="line">		&#123;</span><br><span class="line">			printf(&quot;target file write error\n&quot;);</span><br><span class="line">			return NULL;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	printf(&quot;copy_file**: copy %s to %s\n&quot;, path-&gt;source_path, targfile);</span><br><span class="line"></span><br><span class="line">	close(sfd);</span><br><span class="line">	close(tfd);</span><br><span class="line"></span><br><span class="line">	return (void *)path;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void *create_dir(void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	struct Path *dir = (struct Path *)arg;</span><br><span class="line">	if(dir == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;directory path is empty\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/*目标目录中需要创建的目录的路径*/</span><br><span class="line">	char pathbuf[MAX_PATH] = &#123;0&#125;;</span><br><span class="line">	sprintf(pathbuf, &quot;%s/%s&quot;, dir-&gt;target_path, dir-&gt;source_path);</span><br><span class="line"></span><br><span class="line">	if(mkdir(pathbuf, 0755) == -1)          //创建目录</span><br><span class="line">	&#123;</span><br><span class="line">		perror(&quot;create directory failed\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;	</span><br><span class="line"></span><br><span class="line">	printf(&quot;create_dir**: create dir %s to %s\n&quot;, dir-&gt;source_path, dir-&gt;target_path);</span><br><span class="line"></span><br><span class="line">	return (void *)dir;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">void *retridirt(void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	struct Path *path = (struct Path *)arg;</span><br><span class="line">	if(path == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;path missed\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	DIR *dp;</span><br><span class="line">	char name[MAX_FILE] = &#123;0&#125;;</span><br><span class="line">	struct dirent *entry;</span><br><span class="line">	struct Path temp;</span><br><span class="line">	strcpy(temp.target_path, path-&gt;target_path);</span><br><span class="line"></span><br><span class="line">	printf(&quot;retridirt**: opendir %s , targetpath: %s\n&quot;, path-&gt;source_path, path-&gt;target_path);</span><br><span class="line"></span><br><span class="line">	if((dp = opendir(path-&gt;source_path)) == NULL)        //打开指定目录</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;cannot open directory: %s\n&quot;, path-&gt;source_path);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	while((entry = readdir(dp)) != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		if(strcmp(entry-&gt;d_name, &quot;.&quot;) == 0  ||  strcmp(entry-&gt;d_name, &quot;..&quot;) == 0)</span><br><span class="line">			continue;</span><br><span class="line">		else</span><br><span class="line">		&#123;</span><br><span class="line">			memset(name, 0, sizeof(name));</span><br><span class="line">			sprintf(name, &quot;%s/%s&quot;, path-&gt;source_path, entry-&gt;d_name);</span><br><span class="line">			strcpy(temp.source_path, name);              //指定源文件路径</span><br><span class="line">			file_paste((void *)&amp;temp);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	closedir(dp);</span><br><span class="line">	return (void *)path;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void *file_paste(void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	struct Path *pth = (struct Path *)arg;</span><br><span class="line">	if(pth == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;pathname is null\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">	printf(&quot;file_paste**: copy file %s to file %s\n&quot;, pth-&gt;source_path, pth-&gt;target_path);</span><br><span class="line"></span><br><span class="line">	/*获取文件属性*/</span><br><span class="line">	struct stat filestat;</span><br><span class="line">	if(stat(pth-&gt;source_path, &amp;filestat) == -1)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;cannot access the file %s\n&quot;, pth-&gt;source_path);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/*判断源文件是否为目录文件*/</span><br><span class="line">	if((filestat.st_mode &amp; S_IFDIR) == S_IFDIR)</span><br><span class="line">	&#123;</span><br><span class="line">		create_dir((void *)pth);</span><br><span class="line">		retridirt((void *)pth);             //继续检索目录</span><br><span class="line">		//pool_add_task(pool, create_dir, (void *)pth);</span><br><span class="line">		//pool_add_task(pool, retridirt, (void *)pth);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		//copy_file((void *)pth);	            //复制文件</span><br><span class="line">		pool_add_task(pool, copy_file, (void *)pth);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return (void *)pth;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">thdpool *initpool(int threadnum)</span><br><span class="line">&#123;</span><br><span class="line">	pool = threadpool_init(threadnum);</span><br><span class="line">	if(pool == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;create thdpool init failed\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	return pool;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><em>threadfunc.c文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;thdpool.h&quot;</span><br><span class="line"></span><br><span class="line">/******************************************</span><br><span class="line">*初始化线程池</span><br><span class="line">******************************************/</span><br><span class="line">thdpool *threadpool_init(int thd_total_num)</span><br><span class="line">&#123;</span><br><span class="line">	thdpool *pool = (thdpool *)malloc(sizeof(thdpool));</span><br><span class="line">	if(pool == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		perror(&quot;threadpool memory alloc failed\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/*初始化互斥锁和条件变量*/</span><br><span class="line">	int mret, cret;</span><br><span class="line">	mret = pthread_mutex_init(&amp;pool-&gt;lock, NULL);</span><br><span class="line">	cret = pthread_cond_init(&amp;pool-&gt;cond, NULL);</span><br><span class="line">	if(mret != 0  ||  cret != 0)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;initial mutex or cond failed\n&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pool-&gt;head = NULL;</span><br><span class="line">	pool-&gt;tail = NULL;</span><br><span class="line"></span><br><span class="line">	pool-&gt;thread_num = thd_total_num;     //线程总数</span><br><span class="line">	pool-&gt;queue_num = 0;</span><br><span class="line">	pool-&gt;active_threads = 0;</span><br><span class="line">	pool-&gt;pool_close = 0;</span><br><span class="line"></span><br><span class="line">	/*创建线程号存储空间*/</span><br><span class="line">	pool-&gt;tids = (pthread_t *)malloc(thd_total_num * sizeof(pthread_t));</span><br><span class="line">	int i = 0;</span><br><span class="line">	for(i = 0; i &lt; thd_total_num; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		if(pthread_create(&amp;(pool-&gt;tids[i]), NULL, thread_func, (void *)pool) != 0)</span><br><span class="line">		&#123;</span><br><span class="line">			printf(&quot;create pool thread %d failed\n&quot;, i);</span><br><span class="line">			return NULL;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	return pool;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/**************************************</span><br><span class="line">*销毁线程池</span><br><span class="line">**************************************/</span><br><span class="line">int threadpool_destroy(thdpool *pool)</span><br><span class="line">&#123;</span><br><span class="line">	if(pool == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;thread pool missed, destroy thdpool failed\n&quot;);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if(pool-&gt;pool_close)</span><br><span class="line">		return -1;           //若线程已经退出，则直接返回</span><br><span class="line">	while(pool-&gt;queue_num != 0);</span><br><span class="line">	pool-&gt;pool_close = 1;</span><br><span class="line"></span><br><span class="line">	/*唤醒所有线程，线程退出*/</span><br><span class="line">	pthread_cond_broadcast(&amp;pool-&gt;cond);</span><br><span class="line"></span><br><span class="line">	/*阻塞等待线程，防止产生僵尸线程*/</span><br><span class="line">	int i;</span><br><span class="line">	for(i = 0; i &lt; pool-&gt;thread_num; i++)</span><br><span class="line">		pthread_join(pool-&gt;tids[i], NULL);</span><br><span class="line">	free(pool-&gt;tids);</span><br><span class="line"></span><br><span class="line">	/*销毁任务队列*/</span><br><span class="line">	struct task *temp = NULL;</span><br><span class="line">	while(pool-&gt;head != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		temp = pool-&gt;head;</span><br><span class="line">		pool-&gt;head = pool-&gt;head-&gt;next;</span><br><span class="line">		free(temp-&gt;arg);</span><br><span class="line">		free(temp);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/*销毁互斥锁和条件变量*/</span><br><span class="line">	pthread_mutex_destroy(&amp;pool-&gt;lock);</span><br><span class="line">	pthread_cond_destroy(&amp;pool-&gt;cond);</span><br><span class="line"></span><br><span class="line">	free(pool);</span><br><span class="line">	pool = NULL;</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p><em>threadfunc.c文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;thdpool.h&quot;</span><br><span class="line"></span><br><span class="line">/*****************************************</span><br><span class="line">*线程执行体</span><br><span class="line">*****************************************/</span><br><span class="line">void *thread_func(void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	thdpool *pool = (thdpool *)arg;</span><br><span class="line">	if(pool == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;pool missed, cannot execute thread\n&quot;);</span><br><span class="line">		return NULL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	struct task *p;</span><br><span class="line">	while(1)</span><br><span class="line">	&#123;</span><br><span class="line">		pthread_mutex_lock(&amp;pool-&gt;lock);</span><br><span class="line">		/*如果等待队列为0，则阻塞线程，进入等待*/</span><br><span class="line">		while(pool-&gt;queue_num == 0  &amp;&amp;  !pool-&gt;pool_close)</span><br><span class="line">		&#123;</span><br><span class="line">			pthread_cond_wait(&amp;pool-&gt;cond, &amp;pool-&gt;lock);</span><br><span class="line">		&#125;</span><br><span class="line">		/*线程池要销毁了，退出线程*/</span><br><span class="line">		if(pool-&gt;pool_close &gt; 0)</span><br><span class="line">		&#123;</span><br><span class="line">			pthread_mutex_unlock(&amp;pool-&gt;lock);</span><br><span class="line">			pthread_exit(NULL);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		p = pool-&gt;head;</span><br><span class="line">		pool-&gt;head = p-&gt;next;                //从等待队列中取出一个任务</span><br><span class="line">		pool-&gt;queue_num--;                   //等待任务数减1</span><br><span class="line">		pthread_mutex_unlock(&amp;pool-&gt;lock);   //解开互斥锁</span><br><span class="line"></span><br><span class="line">		(*(p-&gt;callback_function))(p-&gt;arg);   //线程真正执行的任务</span><br><span class="line">		free(p);</span><br><span class="line">		p = NULL;</span><br><span class="line">	&#125;</span><br><span class="line">	pthread_exit(NULL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><em>addtask.c文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;thdpool.h&quot;</span><br><span class="line">#include &quot;retridircp.h&quot;</span><br><span class="line"></span><br><span class="line">/**********************************************</span><br><span class="line">*向线程池中添加任务</span><br><span class="line">**********************************************/</span><br><span class="line">int pool_add_task(thdpool *pool, void *(*task)(void *arg), void *arg)</span><br><span class="line">&#123;</span><br><span class="line">	/*创建新任务*/</span><br><span class="line">	struct task *new_task = (struct task *)malloc(sizeof(struct task *));</span><br><span class="line">	if(new_task == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;create new task failed\n&quot;);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	struct Path *pt = (struct Path *)malloc(sizeof(struct Path));</span><br><span class="line">	</span><br><span class="line">	new_task-&gt;callback_function = task;</span><br><span class="line">	strcpy(pt-&gt;source_path, ((struct Path *)arg)-&gt;source_path);</span><br><span class="line">	strcpy(pt-&gt;target_path, ((struct Path *)arg)-&gt;target_path);</span><br><span class="line">	new_task-&gt;arg = (void *)pt;</span><br><span class="line">	new_task-&gt;next = NULL;</span><br><span class="line">	</span><br><span class="line">	pthread_mutex_lock(&amp;pool-&gt;lock);     //互斥锁上锁</span><br><span class="line">	</span><br><span class="line">	if(pool-&gt;head == NULL)           //将新任务加入等待队列</span><br><span class="line">	&#123;</span><br><span class="line">		pool-&gt;head = new_task;</span><br><span class="line">		pool-&gt;tail = new_task;</span><br><span class="line">	&#125;</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		pool-&gt;tail-&gt;next = new_task;</span><br><span class="line">		pool-&gt;tail = new_task;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pool-&gt;queue_num++;       //等待任务数加1</span><br><span class="line"></span><br><span class="line">	pthread_mutex_unlock(&amp;pool-&gt;lock);   //互斥锁解锁</span><br><span class="line">//	pthread_cond_signal(&amp;pool-&gt;cond);    //唤醒一个线程</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><em>main.c文件</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;thdpool.h&quot;</span><br><span class="line">#include &quot;retridircp.h&quot;</span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">	if(argc &lt; 3)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;less arguments in main\n&quot;);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	struct Path pth;</span><br><span class="line">	strcpy(pth.source_path, argv[1]);</span><br><span class="line">	strcpy(pth.target_path, argv[2]); </span><br><span class="line"></span><br><span class="line">	thdpool *p = initpool(100);</span><br><span class="line">	void *ret = file_paste((void *)&amp;pth);</span><br><span class="line">	if(ret == NULL)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;file copy failed\n&quot;);</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">	pthread_cond_broadcast(&amp;p-&gt;cond);</span><br><span class="line"></span><br><span class="line">	printf(&quot;copy directory or file success\n&quot;);</span><br><span class="line"></span><br><span class="line">//	sleep(10);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	int res = threadpool_destroy(p);</span><br><span class="line">	if(res &lt; 0)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;destroy thdpool failed\n&quot;);</span><br><span class="line">		return -2;</span><br><span class="line">	&#125;</span><br><span class="line">	printf(&quot;destroy thdpool success\n&quot;);</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>使用argv[]进行传参（同cp命令的使用方法）</p>
-<h5 id="结果现象"><a href="#结果现象" class="headerlink" title="结果现象"></a>结果现象</h5><p>可以看到，就算是进行超大文件的复制操作时，运用线程池技术，也可达到秒完成级。</p>
-<p>在Linux操作系统当中，很多地方都用到线程池技术，它可以大大加快命令的执行速度，加快完成用户的任务。</p>
-<hr>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Linux//" class="article-tag-list-link color1">Linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/06/23/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8Bcopy%E5%8A%9F%E8%83%BD/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-查找算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" target="_blank">查找算法</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/" class="archive-article-date">
-        <time datetime="2020-06-03T11:42:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-03</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>以下查找算法都是建立在：线性表必须采用顺序存储结构，元素按关键字有序排列。</p>
-<h5 id="二分查找（拆半查找）"><a href="#二分查找（拆半查找）" class="headerlink" title="二分查找（拆半查找）"></a>二分查找（拆半查找）</h5><p>原理：<br>&emsp;&emsp;首先，假设表中元素是按升序排列，将表中间位置记录的关键字与查找关键字比较，如果两者相等，则查找成功;否则利用中间位置记录将表分成前、后两个子表，如果中间位置记录的关键字大于查找关键字，则进一步查找前一子表，否则进一步查找后一子表。重复以上过程，直到找到满足条件的记录，使查找成功，或直到子表不存在为止，此时查找不成功。</p>
-<p>-时间复杂度：log(2n)<br><em>算法实现</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">int half_search(int *a,int key,int num)	//二分查找</span><br><span class="line">&#123;</span><br><span class="line">	int i,mid,low,high;</span><br><span class="line">	low = 0; high = num-1;</span><br><span class="line">	int count = 1;</span><br><span class="line">	int b,k;</span><br><span class="line">	while(1)&#123;</span><br><span class="line">		mid = (high+low)/2;</span><br><span class="line">		if(key == a[mid])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为: %d\n&quot;,mid);</span><br><span class="line">			b = mid - 1;k = mid + 1;</span><br><span class="line">			while(a[b]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,b);</span><br><span class="line">				b--;</span><br><span class="line">			&#125;</span><br><span class="line">			while(a[k]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,k);</span><br><span class="line">				k++;</span><br><span class="line">			&#125;</span><br><span class="line">			return count;</span><br><span class="line">			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		else if(high &lt; low)&#123;</span><br><span class="line">			printf(&quot;没找到\n&quot;);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &lt; a[mid])&#123;</span><br><span class="line">			high = mid - 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &gt; a[mid])&#123;</span><br><span class="line">			low = mid + 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>优点:比较次数少，查找速度快<br>缺点:要求为有序表，插入必须插在合适的位置</p>
-<h5 id="插值查找"><a href="#插值查找" class="headerlink" title="插值查找"></a>插值查找</h5><p>原理：<br>&emsp;&emsp;取中间记录作为比较对象，若给定值与中间记录的关键字相等，则查找成功;若给定值小于中间记录的关键字，则在中间记录左半区继续查找;否则，在右半区查找。不断重复，至到查找成功或者查找失败为止。<br>插值查找是在二分查找的基础上优化来的，他将二分查找中的中间记录“(low+high〉/2”-&gt;&gt;&gt; low + (high - low)*(key - a[low])/(a[high] - a[low]);<br>&emsp;&emsp;//这个的意思其实是low加上key在整个长度的比例乘以整个长度来作为其在序列的偏移量来作为二分查找中”mid”作为中间记录。</p>
-<p>-时间复杂度：O(log2(log2n))<br><em>算法实现</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">int insert_search(int *a,int key,int num)	//插值查找</span><br><span class="line">&#123;</span><br><span class="line">	int i,low,high;</span><br><span class="line">	static int mid;</span><br><span class="line">	low = 0; high = num-1;</span><br><span class="line">	int count = 1;</span><br><span class="line">	int b,k;</span><br><span class="line">	while(1)&#123;</span><br><span class="line">		if(num == 1)&#123;</span><br><span class="line">			if(a[low] == key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为： %d\n&quot;,low);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">			else&#123;</span><br><span class="line">				printf(&quot;没找到\n&quot;);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if(a[high] == a[low])&#123;</span><br><span class="line">			</span><br><span class="line">			if(a[low] == key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为： %d\n&quot;,low);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">			else&#123;</span><br><span class="line">				printf(&quot;没找到\n&quot;);</span><br><span class="line">				return count;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		mid = low + (high - low)*(key - a[low])/(a[high] - a[low]);</span><br><span class="line">		if(key == a[mid])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为: %d\n&quot;,mid);</span><br><span class="line">			b = mid - 1;k = mid + 1;</span><br><span class="line">			while(a[b]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,b);</span><br><span class="line">				b--;</span><br><span class="line">			&#125;</span><br><span class="line">			while(a[k]==key)&#123;</span><br><span class="line">				printf(&quot;找到元素下标为: %d\n&quot;,k);</span><br><span class="line">				k++;</span><br><span class="line">			&#125;</span><br><span class="line">			return count;			</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		else if(high &lt;= low)&#123;</span><br><span class="line">			printf(&quot;没找到\n&quot;);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &lt; a[mid])&#123;</span><br><span class="line">			high = mid - 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">		else if(key &gt; a[mid])&#123;</span><br><span class="line">			low = mid + 1;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>优点:查找速度快,均匀查找比较快。<br>缺点:数组中如果分布非常不均匀，那么差值查找未必是很合适的选择。</p>
-<h5 id="分快查找"><a href="#分快查找" class="headerlink" title="分快查找"></a>分快查找</h5><p>&emsp;&emsp;分块查找是折半查找和顺序查找的一种改进方法，折半查找虽然具有很好的性能，但其前提条件时线性表顺序存储而且按照关键码排序，这一前提条件在结点树很大且表元素动态变化时是难以满足的。而顺序查找可以解决表元素动态变化的要求，但查找效率很低。如果既要保持对线性表的查找具有较快的速度，又要能够满足表元素动态变化的要求，则可采用分块查找的方法。</p>
-<div align="center">
-<img src=/img/算法/分块查找.png alt = "动图演示"/>
-</div>
-
-<p>时间复杂度：O(logn)<br><em>算法实现</em></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">int Part_block(int *a,int key,struct block *table)	//分块查找</span><br><span class="line">&#123;</span><br><span class="line">	int i = 0,count = 1;</span><br><span class="line">	while(key &gt; table[i].key)</span><br><span class="line">		i++;</span><br><span class="line"></span><br><span class="line">	while(table[i].start &lt;= table[i].end)&#123;</span><br><span class="line">		if(key == a[table[i].start])&#123;</span><br><span class="line">			printf(&quot;找到元素下标为： %d\n&quot;,table[i].start);</span><br><span class="line">			return count;</span><br><span class="line">		&#125;</span><br><span class="line">		else&#123;</span><br><span class="line">			table[i].start++;</span><br><span class="line">			count++;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	printf(&quot;没找到\n&quot;);</span><br><span class="line">	return count;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int Max(int *a,int start,int end)	//查找块内最大值</span><br><span class="line">&#123;</span><br><span class="line">	int max;</span><br><span class="line">	max = a[start];</span><br><span class="line">	start += 1;</span><br><span class="line">	while(start &lt; end)&#123;</span><br><span class="line">		if(a[start] &gt; max)&#123;</span><br><span class="line">			max = a[start];</span><br><span class="line">			&#125;</span><br><span class="line">		start +=1;	</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return max;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>优点:无需进行大量移动。<br>缺点:要增加一个索引表的存储空间并对初始化索引表进行排序运算。适用情况:如果线性既要快速查找又经常动态变化，则可采用分块查找。</p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C语言//" class="article-tag-list-link color4">C语言</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2020/06/03/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1983,15 +2043,19 @@
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">嵌入式</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C语言</a>
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+                <a href="javascript:void(0)" class="js-tag color4">C语言</a>
               </li>
             
             <div class="clearfix"></div>
